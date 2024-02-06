@@ -98,6 +98,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Conferir Estoque Atual"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbVendaConferirEstoqueActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
@@ -143,16 +146,9 @@
                               <Component id="jlVendaQuantidade" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jtfVendaQuantidade" alignment="0" min="-2" pref="130" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jlVendaQtdeEmbalagem" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jtfVendaQtdeEmbalagem" min="-2" pref="130" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jbVendaAddProduto" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="140" max="-2" attributes="0"/>
+                          <Component id="jbVendaAddProduto" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="7" max="32767" attributes="0"/>
                           <Component id="jbVendaEditarProduto" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jbVendaRemoverProduto" min="-2" max="-2" attributes="0"/>
@@ -272,11 +268,6 @@
                       </Group>
                       <Component id="jbVendaEditarProduto" min="-2" max="-2" attributes="0"/>
                       <Component id="jbVendaRemoverProduto" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <Component id="jlVendaQtdeEmbalagem" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jtfVendaQtdeEmbalagem" min="-2" max="-2" attributes="0"/>
-                      </Group>
                       <Component id="jbVendaAddProduto" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -432,16 +423,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbVendaRemoverProdutoActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JTextField" name="jtfVendaQtdeEmbalagem">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jtfVendaQtdeEmbalagemActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jlVendaQtdeEmbalagem">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Embalagem"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jlNomeCliente">
           <Properties>

@@ -4,6 +4,7 @@ import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -140,6 +141,22 @@ public class ProdutoDao {
             
             return rs;
         }
+    }
+
+    public Integer getEstoqueProduto(Integer id) throws SQLException {
+        sql.setLength(0);
+        sql.append("SELECT estoque FROM produtos WHERE id = ? ");
+        
+        ResultSet rs;
+        try (Connection conn = connF.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+        }
+        if(rs.next()){
+            return rs.getInt("estoque");
+        }
+        return -1;
     }
     
 }

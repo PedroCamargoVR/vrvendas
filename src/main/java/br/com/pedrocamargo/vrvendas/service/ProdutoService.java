@@ -4,6 +4,7 @@ import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ProdutoService {
 
@@ -24,7 +25,7 @@ public class ProdutoService {
     public ProdutoModel getProdutoById(Integer id) throws SQLException {
         ResultSet rs =  produtoDao.getProdutoById(id);
         if(rs.next()){
-            return new ProdutoModel(rs.getInt("id"), rs.getString("descricao"), rs.getDouble("estoque"), rs.getBigDecimal("preco"), rs.getString("unidade"), rs.getString("ultimaAtualizacao"));
+            return new ProdutoModel(rs.getInt("id"), rs.getString("descricao"), rs.getInt("estoque"), rs.getBigDecimal("preco"), rs.getString("unidade"), rs.getString("ultimaAtualizacao"));
         }
         return null;
     }
@@ -33,4 +34,10 @@ public class ProdutoService {
         return produtoDao.getProdutoByDescricao(descricao);
     }
     
+    public void atualizaEstoqueProduto(ProdutoModel produto) throws SQLException{
+        Integer estoqueAtual = produtoDao.getEstoqueProduto(produto.getId());
+        if(estoqueAtual != -1){
+            produto.setEstoque(estoqueAtual);
+        }
+    }
 }

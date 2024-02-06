@@ -2,10 +2,16 @@ package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ClienteController;
 import br.com.pedrocamargo.vrvendas.controller.ProdutoController;
+import br.com.pedrocamargo.vrvendas.controller.VendaController;
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import java.awt.BorderLayout;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import util.ExibirJanelaUtil;
 import util.GerarTabelaUtil;
@@ -15,12 +21,15 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     
     ClienteController clienteController;
     ProdutoController produtoController;
-    String[] nomeColunas = {"ID", "Descricao", "Quantidade", "Embalagem", "Total", "Estoque Atual"};
+    VendaController vendaController;
+    String[] nomeColunas = {"ID", "Descricao", "Quantidade", "Unidade", "Total", "Estoque Atual"};
     GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,false);
     
    public NovaVendaView() {
        this.clienteController = new ClienteController();
        this.produtoController = new ProdutoController();
+       this.vendaController = new VendaController();
+       vendaController.criarNovaVenda();
        initComponents();
        iniciarTabela();
     }
@@ -62,8 +71,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jlVendaQuantidade = new javax.swing.JLabel();
         jbVendaEditarProduto = new javax.swing.JButton();
         jbVendaRemoverProduto = new javax.swing.JButton();
-        jtfVendaQtdeEmbalagem = new javax.swing.JTextField();
-        jlVendaQtdeEmbalagem = new javax.swing.JLabel();
         jlNomeCliente = new javax.swing.JLabel();
         jlDescricaoProduto = new javax.swing.JLabel();
         jbVendaAddProduto = new javax.swing.JButton();
@@ -78,6 +85,11 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jbVendaConferirEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
         jbVendaConferirEstoque.setText("Conferir Estoque Atual");
+        jbVendaConferirEstoque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbVendaConferirEstoqueActionPerformed(evt);
+            }
+        });
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalizar.png"))); // NOI18N
         jButton1.setText("Finalizar");
@@ -212,14 +224,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jtfVendaQtdeEmbalagem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfVendaQtdeEmbalagemActionPerformed(evt);
-            }
-        });
-
-        jlVendaQtdeEmbalagem.setText("Embalagem");
-
         jlNomeCliente.setText("Nome");
 
         jlDescricaoProduto.setText("Descrição");
@@ -259,14 +263,9 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                         .addGroup(jpVendaFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jlVendaQuantidade)
                             .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpVendaFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlVendaQtdeEmbalagem)
-                            .addGroup(jpVendaFormularioLayout.createSequentialGroup()
-                                .addComponent(jtfVendaQtdeEmbalagem, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jbVendaAddProduto)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(140, 140, 140)
+                        .addComponent(jbVendaAddProduto)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addComponent(jbVendaEditarProduto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jbVendaRemoverProduto))
@@ -356,10 +355,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                             .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jbVendaEditarProduto)
                     .addComponent(jbVendaRemoverProduto)
-                    .addGroup(jpVendaFormularioLayout.createSequentialGroup()
-                        .addComponent(jlVendaQtdeEmbalagem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfVendaQtdeEmbalagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jbVendaAddProduto))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -405,26 +400,23 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private void iniciarTabela(){
         gerarTabela.limparTabela();
         
-        // Adiciona algumas linhas de exemplo
+        Map<ProdutoModel, Integer> produtosSelecionados = (LinkedHashMap) vendaController.getVendaAtual().getProdutosSelecionados();
         
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Doce de Coco tipo embalagem 2", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
-        gerarTabela.addLinha(new String[]{"1", "Coca Cola 2L", "10","12","120","220"});
+        produtosSelecionados.forEach((produto,quantidade) -> {
+            gerarTabela.addLinha(new String[]{
+                produto.getId().toString(), 
+                produto.getDescricao(), 
+                quantidade.toString(),
+                produto.getUnidade(),
+                produto.getPreco().multiply(new BigDecimal(quantidade)).toString(),
+                produto.getEstoque().toString()});
+        });
         
         jpTabelaProdutosInseridos.setLayout(new BorderLayout());
         jpTabelaProdutosInseridos.add(gerarTabela.getScrollPane(), BorderLayout.CENTER);
         jpTabelaProdutosInseridos.setVisible(true);
+        jpTabelaProdutosInseridos.revalidate();
+        jpTabelaProdutosInseridos.repaint();
     }
     
     private void jtfVendaIdClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfVendaIdClienteActionPerformed
@@ -468,10 +460,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jbVendaRemoverProdutoActionPerformed
 
-    private void jtfVendaQtdeEmbalagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfVendaQtdeEmbalagemActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfVendaQtdeEmbalagemActionPerformed
-
     private void jtfVendaIdClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfVendaIdClienteFocusLost
         if(!jtfVendaIdCliente.getText().isEmpty()){
             try{
@@ -495,7 +483,20 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbPesquisaClienteActionPerformed
 
     private void jbVendaAddProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaAddProdutoActionPerformed
-        // TODO add your handling code here:
+        if(!jtfVendaProdutoId.getText().isEmpty()){
+            try {
+                Integer quantidade = Integer.parseInt(jtfVendaQuantidade.getText());
+                vendaController.getVendaAtual().adicionarProduto(produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), quantidade);
+                limpaCamposProduto();
+                jtfVendaQuantidade.setText("");
+                iniciarTabela();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
+            } catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Erro ao inserir produto na venda", "Erro", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        
     }//GEN-LAST:event_jbVendaAddProdutoActionPerformed
 
     private void jtfVendaProdutoIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfVendaProdutoIdFocusLost
@@ -514,6 +515,16 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_jtfVendaProdutoIdFocusLost
+
+    private void jbVendaConferirEstoqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaConferirEstoqueActionPerformed
+        try {
+            produtoController.sincronizarProdutosApiBdLocal();
+            vendaController.atualizaEstoqueProdutosVendaAtual();
+            iniciarTabela();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao sincronizar estoque atual", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jbVendaConferirEstoqueActionPerformed
     
     protected void populaCamposCliente(ClienteModel cliente){
         jtfVendaIdCliente.setText(cliente.getId().toString());
@@ -551,7 +562,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jtfVendaProdutoDescricao.setText(produto.getDescricao());
         jtfVendaTipoEmbalagem.setText(produto.getUnidade());
         jtfVendaEstoqueAtual.setText(produto.getEstoque().toString());
-        jtfVendaQtdeEmbalagem.setText("1");
     }
     
     protected void popularCamposProduto(Integer id){
@@ -562,7 +572,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             jtfVendaProdutoDescricao.setText(produto.getDescricao());
             jtfVendaTipoEmbalagem.setText(produto.getUnidade());
             jtfVendaEstoqueAtual.setText(produto.getEstoque().toString());
-            jtfVendaQtdeEmbalagem.setText("1");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
             limpaCamposCliente();
@@ -594,7 +603,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jlVendaCnpj;
     private javax.swing.JLabel jlVendaEstoqueAtual;
     private javax.swing.JLabel jlVendaNomeFantasia;
-    private javax.swing.JLabel jlVendaQtdeEmbalagem;
     private javax.swing.JLabel jlVendaQuantidade;
     private javax.swing.JLabel jlVendaRazaoSocial;
     private javax.swing.JLabel jlVendaTipoEmbalagem;
@@ -608,7 +616,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtfVendaNomeFantasia;
     private javax.swing.JTextField jtfVendaProdutoDescricao;
     private javax.swing.JTextField jtfVendaProdutoId;
-    private javax.swing.JTextField jtfVendaQtdeEmbalagem;
     private javax.swing.JTextField jtfVendaQuantidade;
     private javax.swing.JTextField jtfVendaRazaoSocial;
     private javax.swing.JTextField jtfVendaTipoEmbalagem;

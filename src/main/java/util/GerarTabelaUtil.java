@@ -5,6 +5,8 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.ListSelectionModel;
+import org.intellij.lang.annotations.JdkConstants;
 
 public class GerarTabelaUtil {
 
@@ -32,6 +34,7 @@ public class GerarTabelaUtil {
         scrollPane.setVisible(true);
         table.setVisible(true);
         table.setFillsViewportHeight(true);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
     public void addLinha(Object[] data) {

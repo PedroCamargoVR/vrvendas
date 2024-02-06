@@ -5,6 +5,7 @@ import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import br.com.pedrocamargo.vrvendas.service.ProdutoService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ProdutoController implements ProdutoControllerInterface{
 
@@ -33,5 +34,4 @@ public class ProdutoController implements ProdutoControllerInterface{
     public ResultSet getProdutoByDescricao(String descricao) throws SQLException {
         return produtoService.getProdutoByDescricao(descricao);
     }
-    
 }

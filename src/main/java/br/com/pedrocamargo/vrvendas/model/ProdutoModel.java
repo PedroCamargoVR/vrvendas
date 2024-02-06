@@ -8,12 +8,12 @@ import util.ConverterTimeStampUtil;
 public class ProdutoModel {
     private Integer id;
     private String descricao;
-    private Double estoque;
+    private Integer estoque;
     private BigDecimal preco;
     private String unidade;
     private String ultimaAtualizacao;
 
-    public ProdutoModel(Integer id, String descricao, Double estoque, BigDecimal preco, String unidade, String ultimaAtualizacao) {
+    public ProdutoModel(Integer id, String descricao, Integer estoque, BigDecimal preco, String unidade, String ultimaAtualizacao) {
         this.id = id;
         this.descricao = descricao;
         this.estoque = estoque;
@@ -30,12 +30,12 @@ public class ProdutoModel {
         return descricao;
     }
 
-    public Double getEstoque() {
+    public Integer getEstoque() {
         return estoque;
     }
 
     public BigDecimal getPreco() {
-        return preco;
+        return preco.setScale(2, RoundingMode.HALF_UP);
     }
 
     public String getUnidade() {
@@ -48,5 +48,9 @@ public class ProdutoModel {
     
     public Timestamp getUltimaAtualizacaoTimeStamp(){
         return Timestamp.valueOf(ConverterTimeStampUtil.converteTimeStampToLocalDateTime(this.getUltimaAtualizacao()));
+    }
+
+    public void setEstoque(Integer estoqueAtual) {
+        this.estoque = estoqueAtual;
     }
 }

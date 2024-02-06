@@ -12,7 +12,7 @@ public class Main extends javax.swing.JFrame {
     ProdutoController produtoController;
    
     public Main() {
-        //Injeta dependencia do ProdutoDao
+        //Injeta dependencia do ProdutoController
         this.produtoController = new ProdutoController();
         initComponents();
         //Atualiza dados dos produtos ao abrir aplicacao
