@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import javax.swing.JOptionPane;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -125,6 +126,23 @@ public class ProdutoDao {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             
+            return rs;
+        }
+    }
+    
+    public ResultSet getProdutosByVendaId(Integer idVenda) throws SQLException{
+        sql.setLength(0);
+        sql.append("SELECT p.id,p.descricao,p.estoque,p.preco,p.unidade,p.ultimaatualizacao,vp.quantidade ");
+        sql.append("FROM produtos p ");
+        sql.append("INNER JOIN vendaproduto vp on vp.id_produto = p.id ");
+        sql.append("where p.id in (select id_produto from vendaproduto where id_venda = ?)");
+        
+        try (Connection conn = connF.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1, idVenda);
+            
+            ResultSet rs = ps.executeQuery();
             return rs;
         }
     }

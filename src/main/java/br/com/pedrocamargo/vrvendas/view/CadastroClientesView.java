@@ -16,9 +16,9 @@ import util.GerarTabelaUtil;
 
 public class CadastroClientesView extends javax.swing.JInternalFrame {
     
-    ClienteController clienteController;
-    String[] nomeColunas = {"ID", "Nome", "Nome Fantasia", "Razão Social", "CNPJ"};
-    GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,false);
+    private ClienteController clienteController;
+    private String[] nomeColunas = {"ID", "Nome", "Nome Fantasia", "Razão Social", "CNPJ"};
+    private GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,false);
     
     
     public CadastroClientesView() {

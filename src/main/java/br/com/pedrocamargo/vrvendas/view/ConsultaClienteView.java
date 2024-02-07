@@ -13,10 +13,10 @@ import util.GerarTabelaUtil;
 
 public class ConsultaClienteView extends javax.swing.JInternalFrame {
 
-    ClienteController clienteController;
-    String[] nomeColunasConsulta = {"ID", "Nome", "Nome Fantasia", "Razão Social", "CNPJ"};
-    GerarTabelaUtil gerarTabelaConsulta = new GerarTabelaUtil(nomeColunasConsulta,false);
-    JInternalFrame framePai;
+    private ClienteController clienteController;
+    private String[] nomeColunasConsulta = {"ID", "Nome", "Nome Fantasia", "Razão Social", "CNPJ"};
+    private GerarTabelaUtil gerarTabelaConsulta = new GerarTabelaUtil(nomeColunasConsulta,false);
+    private JInternalFrame framePai;
     
     public ConsultaClienteView(JInternalFrame framePai) {
         this.clienteController = new ClienteController();

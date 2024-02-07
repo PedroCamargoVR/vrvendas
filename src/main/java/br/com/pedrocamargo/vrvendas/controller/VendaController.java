@@ -3,6 +3,7 @@ package br.com.pedrocamargo.vrvendas.controller;
 import br.com.pedrocamargo.vrvendas.interfaces.VendaControllerInterface;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
 import br.com.pedrocamargo.vrvendas.service.ProdutoService;
+import br.com.pedrocamargo.vrvendas.service.VendaService;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -12,9 +13,17 @@ public class VendaController implements VendaControllerInterface {
     
     private ProdutoService produtoService;
     private VendaModel vendaAtual;
+    private VendaService vendaService;
     
     public VendaController(){
         this.produtoService = new ProdutoService();
+        this.vendaService = new VendaService();
+    }
+    
+    public VendaController(VendaModel venda){
+        this.produtoService = new ProdutoService();
+        this.vendaService = new VendaService();
+        this.vendaAtual = venda;
     }
 
     @Override
@@ -48,6 +57,18 @@ public class VendaController implements VendaControllerInterface {
         
     }
 
-    
-    
+    @Override
+    public BigDecimal getValorTotalVenda() {
+        return this.vendaAtual.getValortotal();
+    }
+
+    @Override
+    public Integer salvarVenda(VendaModel venda) throws SQLException {
+        return vendaService.salvarVenda(venda);
+    }
+
+    @Override
+    public VendaModel getVendaById(Integer idVenda) throws SQLException {
+        return vendaService.getVendaById(idVenda);
+    }
 }

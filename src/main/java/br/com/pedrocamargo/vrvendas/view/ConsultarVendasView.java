@@ -8,8 +8,8 @@ import util.GerarTabelaEmCelulaUtil;
 
 public class ConsultarVendasView extends javax.swing.JInternalFrame {
 
-    String[] nomeColunas = {"ID", "Razao Social", "CNPJ", "Vendas"};
-    GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,true);
+    private String[] nomeColunas = {"ID", "Razao Social", "CNPJ", "Vendas"};
+    private GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,true);
    
     public ConsultarVendasView() {
         initComponents();

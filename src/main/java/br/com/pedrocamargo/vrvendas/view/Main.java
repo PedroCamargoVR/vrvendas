@@ -2,6 +2,7 @@ package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ProdutoController;
 import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
+import br.com.pedrocamargo.vrvendas.service.VendaService;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,7 +10,7 @@ import javax.swing.JOptionPane;
 import util.ExibirJanelaUtil;
 
 public class Main extends javax.swing.JFrame {
-    ProdutoController produtoController;
+    private ProdutoController produtoController;
    
     public Main() {
         //Injeta dependencia do ProdutoController

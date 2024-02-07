@@ -53,4 +53,19 @@ public class ProdutoModel {
     public void setEstoque(Integer estoqueAtual) {
         this.estoque = estoqueAtual;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        ProdutoModel that = (ProdutoModel) o;
+        return this.id == that.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }

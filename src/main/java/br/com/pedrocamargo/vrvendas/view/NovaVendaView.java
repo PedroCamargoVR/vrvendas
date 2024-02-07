@@ -19,11 +19,13 @@ import util.GerarTabelaUtil;
 
 public class NovaVendaView extends javax.swing.JInternalFrame {
     
-    ClienteController clienteController;
-    ProdutoController produtoController;
-    VendaController vendaController;
-    String[] nomeColunas = {"ID", "Descricao", "Quantidade", "Unidade", "Total", "Estoque Atual"};
-    GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,false);
+    private ClienteController clienteController;
+    private ProdutoController produtoController;
+    private VendaController vendaController;
+    private String[] nomeColunas = {"ID", "Descricao", "Quantidade", "Unidade", "Total", "Estoque Atual"};
+    private GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,false);
+    private boolean isEdicaoProduto;
+    private Integer produtoEmEdicao;
     
    public NovaVendaView() {
        this.clienteController = new ClienteController();
@@ -32,6 +34,18 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
        vendaController.criarNovaVenda();
        initComponents();
        iniciarTabela();
+       this.isEdicaoProduto = false;
+    }
+   
+   public NovaVendaView(VendaController venda) {
+       this.clienteController = new ClienteController();
+       this.produtoController = new ProdutoController();
+       this.vendaController = venda;
+       initComponents();
+       iniciarTabela();
+       populaCamposCliente(venda.getVendaAtual().getId_cliente());
+       this.isEdicaoProduto = false;
+       this.setTitle("Venda Numero: " + vendaController.getVendaAtual().getId() + " | Situação da Venda: " + vendaController.getVendaAtual().getStatus());
     }
 
     /**
@@ -74,6 +88,8 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jlNomeCliente = new javax.swing.JLabel();
         jlDescricaoProduto = new javax.swing.JLabel();
         jbVendaAddProduto = new javax.swing.JButton();
+        lbTotalLabel = new javax.swing.JLabel();
+        jlTotalValor = new javax.swing.JLabel();
         jpTabelaProdutosInseridos = new javax.swing.JPanel();
 
         setClosable(true);
@@ -82,6 +98,11 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jbVendaSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/salvar.png"))); // NOI18N
         jbVendaSalvar.setText("Salvar");
+        jbVendaSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbVendaSalvarActionPerformed(evt);
+            }
+        });
 
         jbVendaConferirEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
         jbVendaConferirEstoque.setText("Conferir Estoque Atual");
@@ -235,6 +256,13 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        lbTotalLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbTotalLabel.setText("Total: ");
+
+        jlTotalValor.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jlTotalValor.setForeground(new java.awt.Color(0, 153, 51));
+        jlTotalValor.setText("R$ 0,00");
+
         javax.swing.GroupLayout jpVendaFormularioLayout = new javax.swing.GroupLayout(jpVendaFormulario);
         jpVendaFormulario.setLayout(jpVendaFormularioLayout);
         jpVendaFormularioLayout.setHorizontalGroup(
@@ -262,10 +290,15 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpVendaFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jlVendaQuantidade)
-                            .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(140, 140, 140)
+                            .addGroup(jpVendaFormularioLayout.createSequentialGroup()
+                                .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lbTotalLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jlTotalValor)))
+                        .addGap(52, 52, 52)
                         .addComponent(jbVendaAddProduto)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbVendaEditarProduto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jbVendaRemoverProduto))
@@ -352,7 +385,9 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpVendaFormularioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jtfVendaEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jtfVendaQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbTotalLabel)
+                            .addComponent(jlTotalValor)))
                     .addComponent(jbVendaEditarProduto)
                     .addComponent(jbVendaRemoverProduto)
                     .addComponent(jbVendaAddProduto))
@@ -417,6 +452,10 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jpTabelaProdutosInseridos.setVisible(true);
         jpTabelaProdutosInseridos.revalidate();
         jpTabelaProdutosInseridos.repaint();
+         
+        jlTotalValor.setText(vendaController.getValorTotalVenda().toString());
+        jlTotalValor.revalidate();
+        jlTotalValor.repaint();
     }
     
     private void jtfVendaIdClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfVendaIdClienteActionPerformed
@@ -453,11 +492,41 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jtfVendaQuantidadeActionPerformed
 
     private void jbVendaEditarProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaEditarProdutoActionPerformed
-        System.out.println(gerarTabela.dadosLinhaSelecionada());
+     
+        Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
+        
+        if(dadosLinhaSelecionada.isEmpty()){
+             JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }else{
+            popularCamposProduto(Integer.parseInt(dadosLinhaSelecionada.get("ID")));
+            jtfVendaQuantidade.setText(dadosLinhaSelecionada.get("Quantidade"));
+            isEdicaoProduto = true;
+            jbVendaEditarProduto.setEnabled(false);
+            produtoEmEdicao = Integer.parseInt(dadosLinhaSelecionada.get("ID"));
+        }
     }//GEN-LAST:event_jbVendaEditarProdutoActionPerformed
 
     private void jbVendaRemoverProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaRemoverProdutoActionPerformed
-        // TODO add your handling code here:
+        if(!isEdicaoProduto){
+            Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
+        
+            if(dadosLinhaSelecionada.isEmpty()){
+                 JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }else{
+                 int resposta = JOptionPane.showConfirmDialog(null,"Tem certeza que deseja remover o produto da venda?\n",
+                 "Confirmação",JOptionPane.YES_NO_OPTION);
+                   if(resposta == JOptionPane.YES_OPTION){
+                     try {
+                         vendaController.getVendaAtual().removerProduto(produtoController.getProdutoById(Integer.parseInt(dadosLinhaSelecionada.get("ID"))));
+                         iniciarTabela();
+                     } catch (SQLException ex) {
+                         JOptionPane.showMessageDialog(null, "Erro ao remover produto da venda", "Erro", JOptionPane.ERROR_MESSAGE);
+                     }
+                   }
+               }
+        }else{
+            JOptionPane.showMessageDialog(null, "Não é possível remover um produto enquanto está editando um produto", "Erro", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_jbVendaRemoverProdutoActionPerformed
 
     private void jtfVendaIdClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfVendaIdClienteFocusLost
@@ -483,7 +552,31 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbPesquisaClienteActionPerformed
 
     private void jbVendaAddProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaAddProdutoActionPerformed
-        if(!jtfVendaProdutoId.getText().isEmpty()){
+        if(isEdicaoProduto){
+            if(!jtfVendaProdutoId.getText().isEmpty()){
+                try {
+                    Integer quantidade = Integer.parseInt(jtfVendaQuantidade.getText());
+                    if(Integer.parseInt(jtfVendaProdutoId.getText()) == produtoEmEdicao){
+                        vendaController.getVendaAtual().editarQuantidadeProduto(produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), quantidade);
+                    }else{
+                        vendaController.getVendaAtual().editarProduto(
+                                produtoController.getProdutoById(produtoEmEdicao), 
+                                produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), 
+                                quantidade);
+                    }
+                    limpaCamposProduto();
+                    jtfVendaQuantidade.setText("");
+                    iniciarTabela();
+                    this.isEdicaoProduto = false;
+                    jbVendaEditarProduto.setEnabled(true);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
+                } catch(Exception e){
+                    JOptionPane.showMessageDialog(null, "Erro ao inserir produto na venda", "Erro", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }else{
+            if(!jtfVendaProdutoId.getText().isEmpty()){
             try {
                 Integer quantidade = Integer.parseInt(jtfVendaQuantidade.getText());
                 vendaController.getVendaAtual().adicionarProduto(produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), quantidade);
@@ -496,7 +589,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Erro ao inserir produto na venda", "Erro", JOptionPane.WARNING_MESSAGE);
             }
         }
-        
+        }
     }//GEN-LAST:event_jbVendaAddProdutoActionPerformed
 
     private void jtfVendaProdutoIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfVendaProdutoIdFocusLost
@@ -525,6 +618,26 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Erro ao sincronizar estoque atual", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jbVendaConferirEstoqueActionPerformed
+
+    private void jbVendaSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaSalvarActionPerformed
+        if(jtfVendaIdCliente.getText().isEmpty() || jtfVendaIdCliente.getText() == null){
+            JOptionPane.showMessageDialog(null, "Preencha o campo cliente", "Erro", JOptionPane.WARNING_MESSAGE);
+        }else if(vendaController.getVendaAtual().getProdutosSelecionados().size() == 0){
+            JOptionPane.showMessageDialog(null, "A venda deve ter ao menos um produto", "Erro", JOptionPane.WARNING_MESSAGE);
+        }else{
+            try {
+                vendaController.getVendaAtual().setIdCliente(Integer.parseInt(jtfVendaIdCliente.getText()));
+                vendaController.getVendaAtual().setIdStatus(1);
+                Integer idVendaInserida = vendaController.salvarVenda(vendaController.getVendaAtual());
+                
+                NovaVendaView novaView = new NovaVendaView(new VendaController(vendaController.getVendaById(idVendaInserida)));
+                ExibirJanelaUtil.abrirFormulario(novaView, super.getDesktopPane());
+                this.dispose();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao salvar venda\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jbVendaSalvarActionPerformed
     
     protected void populaCamposCliente(ClienteModel cliente){
         jtfVendaIdCliente.setText(cliente.getId().toString());
@@ -600,6 +713,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbVendaSalvar;
     private javax.swing.JLabel jlDescricaoProduto;
     private javax.swing.JLabel jlNomeCliente;
+    private javax.swing.JLabel jlTotalValor;
     private javax.swing.JLabel jlVendaCnpj;
     private javax.swing.JLabel jlVendaEstoqueAtual;
     private javax.swing.JLabel jlVendaNomeFantasia;
@@ -619,5 +733,6 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtfVendaQuantidade;
     private javax.swing.JTextField jtfVendaRazaoSocial;
     private javax.swing.JTextField jtfVendaTipoEmbalagem;
+    private javax.swing.JLabel lbTotalLabel;
     // End of variables declaration//GEN-END:variables
 }
