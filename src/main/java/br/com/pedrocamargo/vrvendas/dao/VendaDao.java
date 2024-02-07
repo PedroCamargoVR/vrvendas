@@ -241,5 +241,71 @@ public class VendaDao {
         
         return idsProdutosVendaBanco;
     }
+
+    public ResultSet getAllVendasVo() throws SQLException {
+        sql.setLength(0);
+        sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
+        sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
+        sql.append("ORDER BY v.id_status");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        }
+    }
+    
+    public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException{
+        
+        sql.setLength(0);
+        sql.append("SELECT * FROM venda ");
+        sql.append("WHERE id_cliente = ? ");
+        sql.append("ORDER BY id_status");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idCliente);
+            
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        }
+        
+    }
+    
+    public ResultSet getVendasVoByStatus(Integer idStatus) throws SQLException{
+        sql.setLength(0);
+        sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
+        sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
+        sql.append("WHERE id_status = ? ");
+        sql.append("ORDER BY v.id");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idStatus);
+            
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        }
+    }
+    
+    public ResultSet getVendaVoById(Integer idVenda) throws SQLException {
+        sql.setLength(0);
+        sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
+        sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
+        sql.append("WHERE v.id = ? ");
+        sql.append("ORDER BY v.id_status");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idVenda);
+            
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        }
+    }
     
 }

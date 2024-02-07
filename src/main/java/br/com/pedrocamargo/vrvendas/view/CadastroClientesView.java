@@ -294,15 +294,9 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbClienteNovoActionPerformed
 
     private void jbClienteSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbClienteSalvarActionPerformed
-        String id = jtId.getText();
-        String nome = jtNome.getText();
-        String nomeFantasia = jtNomeFantasia.getText();
-        String razaoSocial = jtRazaoSocial.getText();
-        String cnpj = jtCNPJ.getText();
-        
         try {
-            clienteController.salvarCliente(id, nome, nomeFantasia, razaoSocial, cnpj);
-             JOptionPane.showMessageDialog(null, "Operação realizada com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            clienteController.salvarCliente(jtId.getText(), jtNome.getText(), jtNomeFantasia.getText(), jtRazaoSocial.getText(), jtCNPJ.getText());
+            JOptionPane.showMessageDialog(null, "Operação realizada com sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao manipular cliente\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }

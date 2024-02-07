@@ -9,13 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class VendaModel {
-    Integer id;
-    Integer id_cliente;
-    Integer id_status;
-    BigDecimal valortotal;
+    private Integer id;
+    private Integer id_cliente;
+    private Integer id_status;
+    private BigDecimal valortotal;
     private Map<ProdutoModel, Integer> produtos;
-    Timestamp created_at;
-    Timestamp updated_at;
+    private Timestamp created_at;
+    private Timestamp updated_at;
 
     public VendaModel(Integer id, Integer id_cliente, Integer id_status, BigDecimal valortotal) {
         this.id = id;

@@ -1,6 +1,23 @@
 package br.com.pedrocamargo.vrvendas.view;
 
+import br.com.pedrocamargo.vrvendas.controller.ClienteController;
+import br.com.pedrocamargo.vrvendas.controller.VendaController;
+import br.com.pedrocamargo.vrvendas.enums.StatusVendaEnum;
+import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.util.converter.LocalDateTimeStringConverter;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import util.EditarCelulaTabelaUtil;
 import util.GerarTabelaUtil;
@@ -8,21 +25,32 @@ import util.GerarTabelaEmCelulaUtil;
 
 public class ConsultarVendasView extends javax.swing.JInternalFrame {
 
-    private String[] nomeColunas = {"ID", "Razao Social", "CNPJ", "Vendas"};
-    private GerarTabelaUtil gerarTabela = new GerarTabelaUtil(nomeColunas,true);
+    private VendaController vendaController;
+    private ClienteController clienteController;
+    private String[] nomeColunasVisualizacaoNormal = {"ID","Nome Cliente", "CNPJ", "Valor Total", "Data Última Atualização","Status"};;
+    private String[] nomeColunasConsolidadoPorCliente = {"ID", "Razao Social", "CNPJ", "Vendas"};
+    private String[] nomeColunasConsolidadoPorStatus = {"STATUS","Vendas"};
+    private GerarTabelaUtil gerarTabela;
    
     public ConsultarVendasView() {
+        this.vendaController = new VendaController();
+        this.clienteController = new ClienteController();
         initComponents();
-        iniciarTabela();
+        iniciarTabelaNormal();
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        bgTipoConsolidado = new javax.swing.ButtonGroup();
         jpViewBotoes = new javax.swing.JPanel();
         jbViewConsolidada = new javax.swing.JButton();
         jbViewNormal = new javax.swing.JButton();
+        jrbPorCliente = new javax.swing.JRadioButton();
+        jrbPorStatusVenda = new javax.swing.JRadioButton();
+        jbEditarVenda = new javax.swing.JButton();
+        jbRemoverVenda = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jpTabelaConsultaVendas = new javax.swing.JPanel();
 
@@ -40,11 +68,35 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
 
         jbViewNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/normal.png"))); // NOI18N
         jbViewNormal.setText("Visualização Normal");
+        jbViewNormal.setEnabled(false);
         jbViewNormal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbViewNormalActionPerformed(evt);
             }
         });
+
+        bgTipoConsolidado.add(jrbPorCliente);
+        jrbPorCliente.setSelected(true);
+        jrbPorCliente.setText("Por cliente");
+        jrbPorCliente.setEnabled(false);
+        jrbPorCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrbPorClienteActionPerformed(evt);
+            }
+        });
+
+        bgTipoConsolidado.add(jrbPorStatusVenda);
+        jrbPorStatusVenda.setText("Por status venda");
+        jrbPorStatusVenda.setEnabled(false);
+        jrbPorStatusVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrbPorStatusVendaActionPerformed(evt);
+            }
+        });
+
+        jbEditarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editar.png"))); // NOI18N
+
+        jbRemoverVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove.png"))); // NOI18N
 
         javax.swing.GroupLayout jpViewBotoesLayout = new javax.swing.GroupLayout(jpViewBotoes);
         jpViewBotoes.setLayout(jpViewBotoesLayout);
@@ -55,15 +107,28 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                 .addComponent(jbViewNormal)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jbViewConsolidada)
-                .addContainerGap(512, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jrbPorCliente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jrbPorStatusVenda)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addComponent(jbEditarVenda)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbRemoverVenda)
+                .addContainerGap())
         );
         jpViewBotoesLayout.setVerticalGroup(
             jpViewBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpViewBotoesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpViewBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbViewConsolidada)
-                    .addComponent(jbViewNormal))
+                .addGroup(jpViewBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jbRemoverVenda)
+                    .addComponent(jbEditarVenda)
+                    .addGroup(jpViewBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jbViewConsolidada)
+                        .addComponent(jbViewNormal)
+                        .addComponent(jrbPorCliente)
+                        .addComponent(jrbPorStatusVenda)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -104,72 +169,213 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void iniciarTabela(){
-        gerarTabela.limparTabela();
+    
+    private void iniciarTabelaNormal(){
+        for (Component comp : jpTabelaConsultaVendas.getComponents()) {
+            if (comp.equals(gerarTabela.getScrollPane())) {
+                jpTabelaConsultaVendas.remove(gerarTabela.getScrollPane());
+            }
+        }
+        gerarTabela = new GerarTabelaUtil(nomeColunasVisualizacaoNormal,false);        
+        ArrayList<VendaVO> vendas;
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         
-        //Configurando a tabela
-        gerarTabela.getTable().getColumnModel().getColumn(3).setCellRenderer(new GerarTabelaEmCelulaUtil());
-        gerarTabela.getTable().getColumnModel().getColumn(3).setCellEditor(new EditarCelulaTabelaUtil());
-        gerarTabela.getTable().setRowHeight(150);
-        gerarTabela.getTable().getColumnModel().getColumn(0).setMaxWidth(30);
-        gerarTabela.getTable().getColumnModel().getColumn(1).setMaxWidth(180);
-        gerarTabela.getTable().getColumnModel().getColumn(2).setMaxWidth(130);
-        
-        //Definindo SubTabela
-        DefaultTableModel subTabela = new DefaultTableModel(){
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return false;
-                }
-            };
-        subTabela.addColumn("ID");
-        subTabela.addColumn("Valor Total");
-        subTabela.addColumn("Status");
-        subTabela.addRow(new Object[]{"1","R$ 45,60","Finalizado"});
-        subTabela.addRow(new Object[]{"2","R$ 57,30","Finalizado"});
-        subTabela.addRow(new Object[]{"3","R$ 58,70","Finalizado"});
-        subTabela.addRow(new Object[]{"4","R$ 62,30","Finalizado"});
-        subTabela.addRow(new Object[]{"5","R$ 40,50","Finalizado"});
-        subTabela.addRow(new Object[]{"1","R$ 45,60","Finalizado"});
-        subTabela.addRow(new Object[]{"2","R$ 57,30","Finalizado"});
-        subTabela.addRow(new Object[]{"3","R$ 58,70","Finalizado"});
-        subTabela.addRow(new Object[]{"4","R$ 62,30","Finalizado"});
-        subTabela.addRow(new Object[]{"5","R$ 40,50","Final. Parcial"});
-        subTabela.addRow(new Object[]{"1","R$ 45,60","Final. Parcial"});
-        subTabela.addRow(new Object[]{"2","R$ 57,30","Final. Parcial"});
-        subTabela.addRow(new Object[]{"3","R$ 58,70","Final. Parcial"});
-        subTabela.addRow(new Object[]{"4","R$ 62,30","Final. Parcial"});
-        subTabela.addRow(new Object[]{"5","R$ 40,50","Final. Parcial"});
-        subTabela.addRow(new Object[]{"Total","Final. Parcial: R$4523.23","Finalizado: R$ 5678.65"});
-        
-        // Adicionando linhas
-        gerarTabela.addLinha(new Object[]{"1", "Cliente Fictício LTDA", "02.952.561/0001-90",subTabela});
-        gerarTabela.addLinha(new Object[]{"1", "Cliente Fictício LTDA", "02.952.561/0001-90",subTabela});
-        gerarTabela.addLinha(new Object[]{"1", "Cliente Fictício LTDA", "02.952.561/0001-90",subTabela});
-        gerarTabela.addLinha(new Object[]{"1", "Cliente Fictício LTDA", "02.952.561/0001-90",subTabela});
-        gerarTabela.addLinha(new Object[]{"1", "Cliente Fictício LTDA", "02.952.561/0001-90",subTabela});
+        try {
+            vendas = vendaController.getAllVendas();
+            vendas.forEach((venda) -> {
+                LocalDateTime ultimaAtualizacao = LocalDateTime.ofInstant(venda.getUpdated_at().toInstant(), ZoneId.of("America/Sao_Paulo"));
+                
+                gerarTabela.addLinha(new Object[]{
+                        venda.getId(), 
+                        venda.getCliente().getNome(), 
+                        venda.getCliente().getCnpj(), 
+                        "R$ " + venda.getValortotal().toString(),
+                        ultimaAtualizacao.format(formatador), 
+                        StatusVendaEnum.porCodigo(venda.getId_status())
+                    }
+                );
+            });
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar tabela\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
         
         //Exibe tabela em tela
         jpTabelaConsultaVendas.setLayout(new BorderLayout());
         jpTabelaConsultaVendas.add(gerarTabela.getScrollPane(), BorderLayout.CENTER);
         jpTabelaConsultaVendas.setVisible(true);
+        
+        jpTabelaConsultaVendas.revalidate();
+        jpTabelaConsultaVendas.repaint();
+    }
+    
+    private void iniciarTabelaConsolidado(Integer tipo){
+        /**
+         * 1 - Por Clientes
+         * 2 - Por Situação da Venda
+         */
+        switch(tipo){
+            case 1:
+                jpTabelaConsultaVendas.remove(gerarTabela.getScrollPane());
+                gerarTabela = new GerarTabelaUtil(nomeColunasConsolidadoPorCliente,true);
+
+                //Configurando a tabela
+                gerarTabela.getTable().getColumnModel().getColumn(3).setCellRenderer(new GerarTabelaEmCelulaUtil());
+                gerarTabela.getTable().getColumnModel().getColumn(3).setCellEditor(new EditarCelulaTabelaUtil());
+                gerarTabela.getTable().setRowHeight(170);
+                gerarTabela.getTable().getColumnModel().getColumn(0).setMaxWidth(30);
+                gerarTabela.getTable().getColumnModel().getColumn(1).setMaxWidth(180);
+                gerarTabela.getTable().getColumnModel().getColumn(2).setMaxWidth(130);
+            
+                try {
+                    ResultSet clientesRs = clienteController.getClientes();
+                    ResultSet vendasRs;
+                    BigDecimal totalVendasDigitando;
+                    BigDecimal totalVendasFinalParc;
+                    BigDecimal totalVendasFinal;
+
+                    while(clientesRs.next()){
+                        vendasRs = vendaController.getVendasByIdCliente(clientesRs.getInt("id"));
+                        totalVendasDigitando = new BigDecimal(0);
+                        totalVendasFinalParc = new BigDecimal(0);
+                        totalVendasFinal = new BigDecimal(0);                        
+                        
+                        DefaultTableModel subTabelaPorCliente = new DefaultTableModel(){
+                                @Override
+                                public boolean isCellEditable(int row, int column) {
+                                    return false;
+                                }
+                            };
+                        subTabelaPorCliente.addColumn("ID");
+                        subTabelaPorCliente.addColumn("Valor Total");
+                        subTabelaPorCliente.addColumn("Status");
+                        
+                        while(vendasRs.next()){
+                            switch(vendasRs.getInt("id_status")){
+                                case 1:
+                                    totalVendasDigitando = totalVendasDigitando.add(vendasRs.getBigDecimal("valortotal"));
+                                break;
+                                case 2:
+                                    totalVendasFinalParc = totalVendasFinalParc.add(vendasRs.getBigDecimal("valortotal"));
+                                break;
+                                case 3:
+                                    totalVendasFinal = totalVendasFinal.add(vendasRs.getBigDecimal("valortotal"));
+                                break;
+                            }
+                            subTabelaPorCliente.addRow(new Object[]{vendasRs.getInt("id"),vendasRs.getBigDecimal("valortotal"),StatusVendaEnum.porCodigo(vendasRs.getInt("id_status"))});
+                        }
+                        subTabelaPorCliente.addRow(new Object[]{""});
+                        subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
+                        subTabelaPorCliente.addRow(
+                                new Object[]{
+                                    "Digitando: R$ " +  totalVendasDigitando.toString(),
+                                    "Final. Parc.: R$ " +  totalVendasFinalParc.toString(),
+                                    "Finalizados: R$ " +  totalVendasFinal.toString(),
+                                }
+                        );
+                        gerarTabela.addLinha(new Object[]{clientesRs.getInt("id"), clientesRs.getString("nome"), clientesRs.getString("cnpj"),subTabelaPorCliente});
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao carregar clientes\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                //Exibe tabela em tela
+                jpTabelaConsultaVendas.setLayout(new BorderLayout());
+                jpTabelaConsultaVendas.add(gerarTabela.getScrollPane(), BorderLayout.CENTER);
+                jpTabelaConsultaVendas.setVisible(true);
+
+                jpTabelaConsultaVendas.revalidate();
+                jpTabelaConsultaVendas.repaint();
+            break;
+
+
+            case 2:
+                jpTabelaConsultaVendas.remove(gerarTabela.getScrollPane());
+                gerarTabela = new GerarTabelaUtil(nomeColunasConsolidadoPorStatus,true);
+
+                //Configurando a tabela
+                gerarTabela.getTable().getColumnModel().getColumn(1).setCellRenderer(new GerarTabelaEmCelulaUtil());
+                gerarTabela.getTable().getColumnModel().getColumn(1).setCellEditor(new EditarCelulaTabelaUtil());
+                gerarTabela.getTable().setRowHeight(200);
+                gerarTabela.getTable().getColumnModel().getColumn(0).setMaxWidth(150);                
+                
+                try {
+                    for(int i = 1; i <= 3; i++){
+                        ArrayList<VendaVO> vendasVo = vendaController.getVendasVoByIdStatus(i);
+                        
+                        //Definindo SubTabela
+                        DefaultTableModel subTabelaSituacao = new DefaultTableModel(){
+                                @Override
+                                public boolean isCellEditable(int row, int column) {
+                                    return false;
+                                }
+                            };
+                        subTabelaSituacao.addColumn("ID");
+                        subTabelaSituacao.addColumn("Valor Total");
+                        subTabelaSituacao.addColumn("Cliente");
+                        subTabelaSituacao.addColumn("CNPJ");
+
+                        vendasVo.forEach((vendaVO) -> {
+                            subTabelaSituacao.addRow(new Object[]{vendaVO.getId(),vendaVO.getValortotal(),vendaVO.getCliente().getNome(),vendaVO.getCliente().getCnpj()});
+                        });
+                        
+                        gerarTabela.addLinha(new Object[]{StatusVendaEnum.porCodigo(i).toString().toUpperCase(),subTabelaSituacao});
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao carregar vendas\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+
+                //Exibe tabela em tela
+                jpTabelaConsultaVendas.setLayout(new BorderLayout());
+                jpTabelaConsultaVendas.add(gerarTabela.getScrollPane(), BorderLayout.CENTER);
+                jpTabelaConsultaVendas.setVisible(true);
+
+                jpTabelaConsultaVendas.revalidate();
+                jpTabelaConsultaVendas.repaint();
+            break;
+
+        }
+        
     }
     
     private void jbViewConsolidadaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewConsolidadaActionPerformed
-        // TODO add your handling code here:
+        switchBotoes(true);
+        iniciarTabelaConsolidado(1);
     }//GEN-LAST:event_jbViewConsolidadaActionPerformed
 
     private void jbViewNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbViewNormalActionPerformed
-        // TODO add your handling code here:
+        switchBotoes(false);
+        iniciarTabelaNormal();
     }//GEN-LAST:event_jbViewNormalActionPerformed
 
+    private void jrbPorClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbPorClienteActionPerformed
+        iniciarTabelaConsolidado(1);
+    }//GEN-LAST:event_jrbPorClienteActionPerformed
+
+    private void jrbPorStatusVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbPorStatusVendaActionPerformed
+        iniciarTabelaConsolidado(2);
+    }//GEN-LAST:event_jrbPorStatusVendaActionPerformed
+    
+    private void switchBotoes(boolean b){
+        jbViewNormal.setEnabled(b);
+        jbViewConsolidada.setEnabled(!b);
+        
+        jrbPorCliente.setEnabled(b);
+        jrbPorStatusVenda.setEnabled(b);
+        
+        jbEditarVenda.setEnabled(!b);
+        jbRemoverVenda.setEnabled(!b);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup bgTipoConsolidado;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton jbEditarVenda;
+    private javax.swing.JButton jbRemoverVenda;
     private javax.swing.JButton jbViewConsolidada;
     private javax.swing.JButton jbViewNormal;
     private javax.swing.JPanel jpTabelaConsultaVendas;
     private javax.swing.JPanel jpViewBotoes;
+    private javax.swing.JRadioButton jrbPorCliente;
+    private javax.swing.JRadioButton jrbPorStatusVenda;
     // End of variables declaration//GEN-END:variables
 }
