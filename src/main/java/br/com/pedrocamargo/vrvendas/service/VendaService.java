@@ -4,6 +4,7 @@ import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
 import br.com.pedrocamargo.vrvendas.dao.VendaDao;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class VendaService {
         ResultSet rs = vendaDao.getVendaById(idVenda);
         
         if(rs.next()){
-            VendaModel vendaModel = new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),rs.getBigDecimal("valortotal"),rs.getTimestamp("created_at"),rs.getTimestamp("updated_at"));
+            VendaModel vendaModel = new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),new BigDecimal(0),rs.getTimestamp("created_at"),rs.getTimestamp("updated_at"));
             
             ResultSet rsProdutos = produtoDao.getProdutosByVendaId(vendaModel.getId());
             
@@ -37,7 +38,7 @@ public class VendaService {
                     rsProdutos.getInt("id"),
                     rsProdutos.getString("descricao"),
                     rsProdutos.getInt("estoque"),
-                    rsProdutos.getBigDecimal("preco"),
+                    rsProdutos.getBigDecimal("valorprodutonavenda"),
                     rsProdutos.getString("unidade"),
                     rsProdutos.getString("ultimaatualizacao")
                 ), rsProdutos.getInt("quantidade"));

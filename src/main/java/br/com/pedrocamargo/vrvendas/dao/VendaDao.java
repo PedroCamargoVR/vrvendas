@@ -109,20 +109,15 @@ public class VendaDao {
                 
                 if(linhasAfetadas > 0){
                     Map<ProdutoModel, Integer> produtos = venda.getProdutosSelecionados();
-                    ResultSet rsProdutosVenda = getProdutosVendaByIdVenda(venda.getId());
-                    
-                    ArrayList<Integer> idsProdutosVendaBanco = new ArrayList<Integer>();
-                    
-                    while(rsProdutosVenda.next()){
-                        idsProdutosVendaBanco.add(rsProdutosVenda.getInt("id_produto"));
-                    }
+                    ArrayList<Integer> idsProdutosVendaBanco = getProdutosVendaBanco(venda.getId());
                     
                     produtos.forEach((produto,quantidade) -> {
                         if(idsProdutosVendaBanco.contains(produto.getId())){
                             sql.setLength(0);                            
                             sql.append("UPDATE public.vendaproduto ");
                             sql.append("SET valorprodutonavenda = ?, updated_at = ?, quantidade = ? ");
-                            sql.append("WHERE id_venda = ?");
+                            sql.append("WHERE id_venda = ? ");
+                            sql.append("AND id_produto = ?");
                             
                             PreparedStatement psProdutos;
                             try {
@@ -131,6 +126,7 @@ public class VendaDao {
                                 psProdutos.setTimestamp(2, Timestamp.from(Instant.now().minus(Duration.ofHours(1))));
                                 psProdutos.setInt(3, quantidade);
                                 psProdutos.setInt(4, venda.getId());
+                                psProdutos.setInt(5, produto.getId());
 
                                 psProdutos.executeUpdate();
                             } catch (SQLException ex) {
@@ -168,9 +164,38 @@ public class VendaDao {
                                 throw new RuntimeException(ex.getMessage());
                             }
                         }
+                        
+                        ArrayList<Integer> idsProdutosVendaModel = venda.getIdsProdutosSelecionados();
+                        idsProdutosVendaBanco.forEach((idProduto) -> {
+                            /**
+                             * Verifica se o ID do produto que está no banco existe nos produtos presentes na VendaModel
+                             * Se NÃO EXISTIR, executa a deleção
+                             */
+                            if(!idsProdutosVendaModel.contains(idProduto)){
+                                sql.setLength(0);                            
+                                sql.append("DELETE FROM vendaproduto ");
+                                sql.append("WHERE id_venda = ? ");
+                                sql.append("AND id_produto = ?");
+                                
+                                try {
+                                    PreparedStatement psDelete = conn.prepareStatement(sql.toString());
+                                    psDelete.setInt(1, venda.getId());
+                                    psDelete.setInt(2, idProduto);
+                                    
+                                    psDelete.execute();
+                                } catch (SQLException ex) {
+                                    try {
+                                    conn.rollback();
+                                } catch (SQLException exRollback) {
+                                    throw new RuntimeException(exRollback.getMessage());
+                                }
+                                    throw new RuntimeException(ex.getMessage());
+                                }
+                                
+                            }
+                        });
                     });
                     conn.commit();
-                    
                     return venda.getId();
                 }
                 conn.rollback();
@@ -204,6 +229,17 @@ public class VendaDao {
             ResultSet rs = ps.executeQuery();
             return rs;
         }
+    }
+    
+    public ArrayList<Integer> getProdutosVendaBanco(Integer idVenda) throws SQLException{
+        ResultSet rsProdutosVenda = getProdutosVendaByIdVenda(idVenda);
+        ArrayList<Integer> idsProdutosVendaBanco = new ArrayList<Integer>();
+        
+        while(rsProdutosVenda.next()){
+            idsProdutosVendaBanco.add(rsProdutosVenda.getInt("id_produto"));
+        }
+        
+        return idsProdutosVendaBanco;
     }
     
 }

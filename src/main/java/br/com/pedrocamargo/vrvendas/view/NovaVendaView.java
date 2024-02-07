@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import util.ExibirJanelaUtil;
 import util.GerarTabelaUtil;
+import util.SwingUtils;
 
 
 public class NovaVendaView extends javax.swing.JInternalFrame {
@@ -43,7 +44,15 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
        this.vendaController = venda;
        initComponents();
        iniciarTabela();
-       populaCamposCliente(venda.getVendaAtual().getId_cliente());
+       SwingUtils.populaCamposCliente(
+                jtfVendaIdCliente,
+                jtfVendaClienteNome,
+                jtfVendaNomeFantasia,
+                jtfVendaRazaoSocial,
+                jtfVendaCnpj,
+                venda.getVendaAtual().getId_cliente(),
+                clienteController
+               );
        this.isEdicaoProduto = false;
        this.setTitle("Venda Numero: " + vendaController.getVendaAtual().getId() + " | Situação da Venda: " + vendaController.getVendaAtual().getStatus());
     }
@@ -105,7 +114,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         });
 
         jbVendaConferirEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
-        jbVendaConferirEstoque.setText("Conferir Estoque Atual");
+        jbVendaConferirEstoque.setText("Atualizar Produtos");
         jbVendaConferirEstoque.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbVendaConferirEstoqueActionPerformed(evt);
@@ -498,7 +507,14 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         if(dadosLinhaSelecionada.isEmpty()){
              JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
         }else{
-            popularCamposProduto(Integer.parseInt(dadosLinhaSelecionada.get("ID")));
+            SwingUtils.popularCamposProduto(
+                jtfVendaProdutoId,
+                jtfVendaProdutoDescricao,
+                jtfVendaTipoEmbalagem,
+                jtfVendaEstoqueAtual,
+                Integer.parseInt(dadosLinhaSelecionada.get("ID")),
+                produtoController
+            );
             jtfVendaQuantidade.setText(dadosLinhaSelecionada.get("Quantidade"));
             isEdicaoProduto = true;
             jbVendaEditarProduto.setEnabled(false);
@@ -507,7 +523,9 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbVendaEditarProdutoActionPerformed
 
     private void jbVendaRemoverProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaRemoverProdutoActionPerformed
-        if(!isEdicaoProduto){
+        if(vendaController.getVendaAtual().getIdsProdutosSelecionados().size() <= 1){
+            JOptionPane.showMessageDialog(null, "A venda deve ter ao menos um produto!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }else if(!isEdicaoProduto){
             Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
         
             if(dadosLinhaSelecionada.isEmpty()){
@@ -533,15 +551,34 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         if(!jtfVendaIdCliente.getText().isEmpty()){
             try{
                 Integer id = Integer.parseInt(jtfVendaIdCliente.getText());
-                populaCamposCliente(clienteController.getClienteById(id));
+                SwingUtils.populaCamposCliente(
+                jtfVendaIdCliente,
+                jtfVendaClienteNome,
+                jtfVendaNomeFantasia,
+                jtfVendaRazaoSocial,
+                jtfVendaCnpj,
+                clienteController.getClienteById(id)
+               );
             }
             catch(SQLException | NullPointerException eSql){
                 JOptionPane.showMessageDialog(null, "Cliente não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
-                limpaCamposCliente();
+                SwingUtils.limpaCamposCliente(
+                    jtfVendaIdCliente,
+                    jtfVendaClienteNome,
+                    jtfVendaNomeFantasia,
+                    jtfVendaRazaoSocial,
+                    jtfVendaCnpj
+                );
             }
             catch(Exception e){
                  JOptionPane.showMessageDialog(null, "Você deve digitar um numero", "Erro", JOptionPane.ERROR_MESSAGE);
-                 limpaCamposCliente();
+                 SwingUtils.limpaCamposCliente(
+                    jtfVendaIdCliente,
+                    jtfVendaClienteNome,
+                    jtfVendaNomeFantasia,
+                    jtfVendaRazaoSocial,
+                    jtfVendaCnpj
+                );
             }
         }
     }//GEN-LAST:event_jtfVendaIdClienteFocusLost
@@ -564,7 +601,12 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                                 produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), 
                                 quantidade);
                     }
-                    limpaCamposProduto();
+                    SwingUtils.limpaCamposProduto(
+                        jtfVendaProdutoId,
+                        jtfVendaProdutoDescricao,
+                        jtfVendaTipoEmbalagem,
+                        jtfVendaEstoqueAtual
+                    );
                     jtfVendaQuantidade.setText("");
                     iniciarTabela();
                     this.isEdicaoProduto = false;
@@ -580,7 +622,12 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             try {
                 Integer quantidade = Integer.parseInt(jtfVendaQuantidade.getText());
                 vendaController.getVendaAtual().adicionarProduto(produtoController.getProdutoById(Integer.parseInt(jtfVendaProdutoId.getText())), quantidade);
-                limpaCamposProduto();
+                SwingUtils.limpaCamposProduto(
+                    jtfVendaProdutoId,
+                    jtfVendaProdutoDescricao,
+                    jtfVendaTipoEmbalagem,
+                    jtfVendaEstoqueAtual
+                );
                 jtfVendaQuantidade.setText("");
                 iniciarTabela();
             } catch (SQLException ex) {
@@ -596,15 +643,31 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         if(!jtfVendaProdutoId.getText().isEmpty()){
             try{
                 Integer id = Integer.parseInt(jtfVendaProdutoId.getText());
-                popularCamposProduto(produtoController.getProdutoById(id));
+                SwingUtils.popularCamposProduto(
+                    jtfVendaProdutoId,
+                    jtfVendaProdutoDescricao,
+                    jtfVendaTipoEmbalagem,
+                    jtfVendaEstoqueAtual,
+                    produtoController.getProdutoById(id)
+                );
             }
             catch(SQLException | NullPointerException eSql){
                 JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
-                limpaCamposProduto();
+                SwingUtils.limpaCamposProduto(
+                    jtfVendaProdutoId,
+                    jtfVendaProdutoDescricao,
+                    jtfVendaTipoEmbalagem,
+                    jtfVendaEstoqueAtual
+                );
             }
             catch(Exception e){
                  JOptionPane.showMessageDialog(null, "Você deve digitar um numero", "Erro", JOptionPane.ERROR_MESSAGE);
-                 limpaCamposProduto();
+                 SwingUtils.limpaCamposProduto(
+                    jtfVendaProdutoId,
+                    jtfVendaProdutoDescricao,
+                    jtfVendaTipoEmbalagem,
+                    jtfVendaEstoqueAtual
+                );
             }
         }
     }//GEN-LAST:event_jtfVendaProdutoIdFocusLost
@@ -638,65 +701,13 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_jbVendaSalvarActionPerformed
-    
-    protected void populaCamposCliente(ClienteModel cliente){
-        jtfVendaIdCliente.setText(cliente.getId().toString());
-        jtfVendaClienteNome.setText(cliente.getNome());
-        jtfVendaNomeFantasia.setText(cliente.getNomeFantasia());
-        jtfVendaRazaoSocial.setText(cliente.getRazaoSocial());
-        jtfVendaCnpj.setText(cliente.getCnpj());
-    }
-    
-    protected void populaCamposCliente(Integer id){
-        ClienteModel cliente;
-        try {
-            cliente = clienteController.getClienteById(id);
-            jtfVendaIdCliente.setText(cliente.getId().toString());
-            jtfVendaClienteNome.setText(cliente.getNome());
-            jtfVendaNomeFantasia.setText(cliente.getNomeFantasia());
-            jtfVendaRazaoSocial.setText(cliente.getRazaoSocial());
-            jtfVendaCnpj.setText(cliente.getCnpj());
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Cliente não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
-            limpaCamposCliente();
-        }
-    }
-    
-    private void limpaCamposCliente(){
-        jtfVendaIdCliente.setText("");
-        jtfVendaClienteNome.setText("");
-        jtfVendaNomeFantasia.setText("");
-        jtfVendaRazaoSocial.setText("");
-        jtfVendaCnpj.setText("");
-    }
-    
-    protected void popularCamposProduto(ProdutoModel produto){
-        jtfVendaProdutoId.setText(produto.getId().toString());
-        jtfVendaProdutoDescricao.setText(produto.getDescricao());
-        jtfVendaTipoEmbalagem.setText(produto.getUnidade());
-        jtfVendaEstoqueAtual.setText(produto.getEstoque().toString());
-    }
-    
-    protected void popularCamposProduto(Integer id){
-        ProdutoModel produto;
-        try{
-            produto = produtoController.getProdutoById(id);
-            jtfVendaProdutoId.setText(produto.getId().toString());
-            jtfVendaProdutoDescricao.setText(produto.getDescricao());
-            jtfVendaTipoEmbalagem.setText(produto.getUnidade());
-            jtfVendaEstoqueAtual.setText(produto.getEstoque().toString());
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Produto não encontrado", "Erro", JOptionPane.WARNING_MESSAGE);
-            limpaCamposCliente();
-        }
         
+    public void popularCamposProduto(Integer id){
+        SwingUtils.popularCamposProduto(jtfVendaProdutoId, jtfVendaProdutoDescricao, jtfVendaTipoEmbalagem, jtfVendaEstoqueAtual, id, produtoController);
     }
     
-    private void limpaCamposProduto(){
-        jtfVendaProdutoId.setText("");
-        jtfVendaProdutoDescricao.setText("");
-        jtfVendaTipoEmbalagem.setText("");
-        jtfVendaEstoqueAtual.setText("");
+    public void populaCamposCliente(Integer id){
+        SwingUtils.populaCamposCliente(jtfVendaIdCliente, jtfVendaClienteNome, jtfVendaNomeFantasia, jtfVendaRazaoSocial, jtfVendaCnpj, id, clienteController);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

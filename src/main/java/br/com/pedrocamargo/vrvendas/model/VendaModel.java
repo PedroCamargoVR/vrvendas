@@ -4,6 +4,7 @@ import br.com.pedrocamargo.vrvendas.enums.StatusVendaEnum;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -64,6 +65,16 @@ public class VendaModel {
 
     public Map<ProdutoModel, Integer> getProdutosSelecionados() {
         return produtos;
+    }
+    
+    public ArrayList<Integer> getIdsProdutosSelecionados(){
+        ArrayList<Integer> ids = new ArrayList<>();
+        
+        produtos.forEach((produto,quantidade)->{
+            ids.add(produto.getId());
+        });
+        
+        return ids;
     }
 
     public Integer getId() {

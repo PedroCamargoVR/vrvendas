@@ -132,15 +132,18 @@ public class ProdutoDao {
     
     public ResultSet getProdutosByVendaId(Integer idVenda) throws SQLException{
         sql.setLength(0);
-        sql.append("SELECT p.id,p.descricao,p.estoque,p.preco,p.unidade,p.ultimaatualizacao,vp.quantidade ");
+        sql.append("SELECT p.id,p.descricao,p.estoque,p.preco,p.unidade,p.ultimaatualizacao,vp.quantidade,vp.valorprodutonavenda ");
         sql.append("FROM produtos p ");
-        sql.append("INNER JOIN vendaproduto vp on vp.id_produto = p.id ");
-        sql.append("where p.id in (select id_produto from vendaproduto where id_venda = ?)");
+        sql.append("INNER JOIN vendaproduto vp ON vp.id_produto = p.id ");
+        sql.append("WHERE p.id in (select id_produto from vendaproduto where id_venda = ?) ");
+        sql.append("AND vp.id_venda = ? ");
+        sql.append("ORDER BY vp.id");
         
         try (Connection conn = connF.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql.toString());
             
             ps.setInt(1, idVenda);
+            ps.setInt(2, idVenda);
             
             ResultSet rs = ps.executeQuery();
             return rs;
