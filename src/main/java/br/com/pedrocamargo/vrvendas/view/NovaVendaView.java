@@ -36,6 +36,8 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
        initComponents();
        iniciarTabela();
        this.isEdicaoProduto = false;
+       validarCamposHabilitados();
+       
     }
    
    public NovaVendaView(VendaController venda) {
@@ -53,8 +55,9 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 venda.getVendaAtual().getId_cliente(),
                 clienteController
                );
-       this.isEdicaoProduto = false;
+       this.isEdicaoProduto = false;       
        this.setTitle("Venda Numero: " + vendaController.getVendaAtual().getId() + " | Situação da Venda: " + vendaController.getVendaAtual().getStatus());
+       validarCamposHabilitados();
     }
 
     /**
@@ -70,6 +73,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jbVendaSalvar = new javax.swing.JButton();
         jbVendaConferirEstoque = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jbVerificarPendencias = new javax.swing.JButton();
         jpVendaFormulario = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jtfVendaProdutoId = new javax.swing.JTextField();
@@ -103,7 +107,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setTitle("Lançamento de Venda");
-        setPreferredSize(new java.awt.Dimension(730, 600));
+        setPreferredSize(new java.awt.Dimension(750, 600));
 
         jbVendaSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/salvar.png"))); // NOI18N
         jbVendaSalvar.setText("Salvar");
@@ -123,6 +127,19 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalizar.png"))); // NOI18N
         jButton1.setText("Finalizar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jbVerificarPendencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/atencao.png"))); // NOI18N
+        jbVerificarPendencias.setText("Verificar Pendências");
+        jbVerificarPendencias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbVerificarPendenciasActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpVendaBotoesLayout = new javax.swing.GroupLayout(jpVendaBotoes);
         jpVendaBotoes.setLayout(jpVendaBotoesLayout);
@@ -133,6 +150,8 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 .addComponent(jbVendaSalvar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbVerificarPendencias)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jbVendaConferirEstoque)
                 .addContainerGap())
@@ -144,7 +163,8 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 .addGroup(jpVendaBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbVendaSalvar)
                     .addComponent(jbVendaConferirEstoque)
-                    .addComponent(jButton1))
+                    .addComponent(jButton1)
+                    .addComponent(jbVerificarPendencias))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -444,7 +464,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private void iniciarTabela(){
         gerarTabela.limparTabela();
         
-        Map<ProdutoModel, Integer> produtosSelecionados = (LinkedHashMap) vendaController.getVendaAtual().getProdutosSelecionados();
+        Map<ProdutoModel, Integer> produtosSelecionados = (LinkedHashMap) vendaController.getVendaAtual().getProdutosVenda();
         
         produtosSelecionados.forEach((produto,quantidade) -> {
             gerarTabela.addLinha(new String[]{
@@ -523,7 +543,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbVendaEditarProdutoActionPerformed
 
     private void jbVendaRemoverProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaRemoverProdutoActionPerformed
-        if(vendaController.getVendaAtual().getIdsProdutosSelecionados().size() <= 1){
+        if(vendaController.getVendaAtual().getIdsProdutosVenda().size() <= 1){
             JOptionPane.showMessageDialog(null, "A venda deve ter ao menos um produto!", "Erro", JOptionPane.ERROR_MESSAGE);
         }else if(!isEdicaoProduto){
             Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
@@ -685,22 +705,64 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private void jbVendaSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVendaSalvarActionPerformed
         if(jtfVendaIdCliente.getText().isEmpty() || jtfVendaIdCliente.getText() == null){
             JOptionPane.showMessageDialog(null, "Preencha o campo cliente", "Erro", JOptionPane.WARNING_MESSAGE);
-        }else if(vendaController.getVendaAtual().getProdutosSelecionados().size() == 0){
+        }else if(vendaController.getVendaAtual().getProdutosVenda().size() == 0){
             JOptionPane.showMessageDialog(null, "A venda deve ter ao menos um produto", "Erro", JOptionPane.WARNING_MESSAGE);
         }else{
             try {
                 vendaController.getVendaAtual().setIdCliente(Integer.parseInt(jtfVendaIdCliente.getText()));
                 vendaController.getVendaAtual().setIdStatus(1);
                 Integer idVendaInserida = vendaController.salvarVenda(vendaController.getVendaAtual());
-                
-                NovaVendaView novaView = new NovaVendaView(new VendaController(vendaController.getVendaById(idVendaInserida)));
-                ExibirJanelaUtil.abrirFormulario(novaView, super.getDesktopPane());
+                iniciarNovaTela(idVendaInserida);
                 this.dispose();
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Erro ao salvar venda\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_jbVendaSalvarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if(jtfVendaIdCliente.getText().isEmpty() || jtfVendaIdCliente.getText() == null){
+            JOptionPane.showMessageDialog(null, "Preencha o campo cliente", "Erro", JOptionPane.WARNING_MESSAGE);
+        }else if(vendaController.getVendaAtual().getProdutosVenda().size() == 0){
+            JOptionPane.showMessageDialog(null, "A venda deve ter ao menos um produto", "Erro", JOptionPane.WARNING_MESSAGE);
+        }else{
+            int resposta = JOptionPane.showConfirmDialog(null,"Deseja realmente finalizar a venda?\n(Esta venda não poderá mais ser alterada)",
+                 "Confirmação",JOptionPane.YES_NO_OPTION);
+            if(resposta == JOptionPane.YES_OPTION){
+              try {
+                  Integer responseFinalizacaoVenda = vendaController.finalizarVenda(vendaController.getVendaAtual());
+                  switch(responseFinalizacaoVenda){
+                      case 200:
+                          JOptionPane.showMessageDialog(null, "A venda foi finalizada com sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
+                          iniciarNovaTela(vendaController.getVendaAtual().getId());
+                      break;
+                      case 207:
+                          JOptionPane.showMessageDialog(null, "A venda foi finalizada parcialmente!\nVerifique as pendências no botão \"Verificar Pendências\" na tela da venda!", "Finalizada Parcialmente!", JOptionPane.WARNING_MESSAGE);
+                          iniciarNovaTela(vendaController.getVendaAtual().getId());
+                      break;
+                      case 400:
+                          JOptionPane.showMessageDialog(null, "Ocorreu um erro ao finalizar a venda\nErro: 400 - Todos os produtos com estoque insuficiente", "Finalizada Parcialmente!", JOptionPane.ERROR_MESSAGE);
+                      break;
+                      case 500:
+                          JOptionPane.showMessageDialog(null, "Ocorreu um erro na API de integração ao tentar finalizar a venda", "Finalizada Parcialmente!", JOptionPane.ERROR_MESSAGE);
+                      break;
+                      default:
+                          JOptionPane.showMessageDialog(null, "Ocorreu um erro desconhecido ao tentar finalizar a venda", "Finalizada Parcialmente!", JOptionPane.ERROR_MESSAGE);
+                      break;
+                  }
+              } catch (Exception ex) {
+                  JOptionPane.showMessageDialog(null, "Erro ao finalizar a venda\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+              }
+            }
+            
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jbVerificarPendenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVerificarPendenciasActionPerformed
+        VerificarPendenciasView verificarPendencias = new VerificarPendenciasView(vendaController.getVendaAtual().getId());
+        ExibirJanelaUtil.abrirFormulario(verificarPendencias, super.getDesktopPane());
+    }//GEN-LAST:event_jbVerificarPendenciasActionPerformed
         
     public void popularCamposProduto(Integer id){
         SwingUtils.popularCamposProduto(jtfVendaProdutoId, jtfVendaProdutoDescricao, jtfVendaTipoEmbalagem, jtfVendaEstoqueAtual, id, produtoController);
@@ -708,6 +770,26 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     
     public void populaCamposCliente(Integer id){
         SwingUtils.populaCamposCliente(jtfVendaIdCliente, jtfVendaClienteNome, jtfVendaNomeFantasia, jtfVendaRazaoSocial, jtfVendaCnpj, id, clienteController);
+    }
+    
+    private void validarCamposHabilitados(){
+        if(this.vendaController.getVendaAtual().getId_status() != 1){
+           jbVendaSalvar.setEnabled(false);
+           jtfVendaIdCliente.setEnabled(false);
+           jbPesquisaCliente.setEnabled(false);
+           jtfVendaProdutoId.setEnabled(false);
+           jbPesquisaProduto.setEnabled(false);
+           jbVendaEditarProduto.setEnabled(false);
+           jbVendaRemoverProduto.setEnabled(false);
+       }
+       if(this.vendaController.getVendaAtual().getId_status() != 2){
+           jbVerificarPendencias.setEnabled(false);
+       }
+    }
+    
+    private void iniciarNovaTela(Integer idVenda) throws SQLException{
+        NovaVendaView novaView = new NovaVendaView(new VendaController(vendaController.getVendaById(idVenda)));
+        ExibirJanelaUtil.abrirFormulario(novaView, super.getDesktopPane());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -722,6 +804,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbVendaEditarProduto;
     private javax.swing.JButton jbVendaRemoverProduto;
     private javax.swing.JButton jbVendaSalvar;
+    private javax.swing.JButton jbVerificarPendencias;
     private javax.swing.JLabel jlDescricaoProduto;
     private javax.swing.JLabel jlNomeCliente;
     private javax.swing.JLabel jlTotalValor;

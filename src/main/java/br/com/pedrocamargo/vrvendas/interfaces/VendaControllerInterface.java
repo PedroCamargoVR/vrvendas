@@ -23,11 +23,20 @@ public interface VendaControllerInterface {
     
     public ArrayList<VendaVO> getAllVendas() throws SQLException;
     
+    public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException;
+    
+    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException;
+    
     public void atualizaEstoqueProdutosVendaAtual() throws SQLException;
     
     public BigDecimal getValorTotalVenda();
     
     public Integer salvarVenda(VendaModel venda) throws SQLException ;
     
+    public void excluirVenda(Integer id) throws SQLException;
+    
+    public Integer finalizarVenda(VendaModel vendaAtual) throws Exception;
+    
+    public void insertProdutoVendaProdutoErro(Integer idVendaProduto, String motivo) throws SQLException;
    
 }

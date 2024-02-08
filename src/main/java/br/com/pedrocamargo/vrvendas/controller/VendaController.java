@@ -31,7 +31,7 @@ public class VendaController implements VendaControllerInterface {
 
     @Override
     public void criarNovaVenda() {
-        this.vendaAtual = new VendaModel(0, 0, 0, new BigDecimal(0));
+        this.vendaAtual = new VendaModel(0, 0, 1, new BigDecimal(0));
     }
     
     @Override
@@ -58,6 +58,11 @@ public class VendaController implements VendaControllerInterface {
     public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
         return vendaService.getVendasVoByIdStatus(idStatus);
     }
+    
+    @Override
+    public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException{
+        return vendaService.getProdutosVendaByIdVenda(idVenda);
+    }
 
     @Override
     public ArrayList<VendaVO> getAllVendas() throws SQLException {
@@ -67,7 +72,7 @@ public class VendaController implements VendaControllerInterface {
     @Override
     public void atualizaEstoqueProdutosVendaAtual() throws SQLException {
         try{
-            this.vendaAtual.getProdutosSelecionados().forEach((produto,quantidade) -> {
+            this.vendaAtual.getProdutosVenda().forEach((produto,quantidade) -> {
                 try{
                     produtoService.atualizaEstoqueProduto(produto);
                 } catch(SQLException e){
@@ -88,5 +93,25 @@ public class VendaController implements VendaControllerInterface {
     @Override
     public Integer salvarVenda(VendaModel venda) throws SQLException {
         return vendaService.salvarVenda(venda);
+    }
+
+    @Override
+    public void excluirVenda(Integer id) throws SQLException {
+        vendaService.excluirVenda(id);
+    }
+    
+    @Override
+    public Integer finalizarVenda(VendaModel vendaAtual) throws Exception {
+        return vendaService.finalizarVenda(vendaAtual);
+    }
+
+    @Override
+    public void insertProdutoVendaProdutoErro(Integer idVendaProduto, String motivo) throws SQLException {
+        vendaService.insertProdutoVendaProdutoErro(idVendaProduto,motivo);
+    }
+
+    @Override
+    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
+        return vendaService.getProdutosVendaErroFinalizacao(idVenda);
     }
 }

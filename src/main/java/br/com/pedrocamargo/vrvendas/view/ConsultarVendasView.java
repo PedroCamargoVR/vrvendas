@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import util.EditarCelulaTabelaUtil;
+import util.ExibirJanelaUtil;
 import util.GerarTabelaUtil;
 import util.GerarTabelaEmCelulaUtil;
 
@@ -51,6 +53,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
         jrbPorStatusVenda = new javax.swing.JRadioButton();
         jbEditarVenda = new javax.swing.JButton();
         jbRemoverVenda = new javax.swing.JButton();
+        jbAtualizaTabelaNormal = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jpTabelaConsultaVendas = new javax.swing.JPanel();
 
@@ -95,8 +98,25 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
         });
 
         jbEditarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editar.png"))); // NOI18N
+        jbEditarVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEditarVendaActionPerformed(evt);
+            }
+        });
 
         jbRemoverVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove.png"))); // NOI18N
+        jbRemoverVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbRemoverVendaActionPerformed(evt);
+            }
+        });
+
+        jbAtualizaTabelaNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
+        jbAtualizaTabelaNormal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAtualizaTabelaNormalActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpViewBotoesLayout = new javax.swing.GroupLayout(jpViewBotoes);
         jpViewBotoes.setLayout(jpViewBotoesLayout);
@@ -111,7 +131,9 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                 .addComponent(jrbPorCliente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jrbPorStatusVenda)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 117, Short.MAX_VALUE)
+                .addComponent(jbAtualizaTabelaNormal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbEditarVenda)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbRemoverVenda)
@@ -128,7 +150,8 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                         .addComponent(jbViewConsolidada)
                         .addComponent(jbViewNormal)
                         .addComponent(jrbPorCliente)
-                        .addComponent(jrbPorStatusVenda)))
+                        .addComponent(jrbPorStatusVenda)
+                        .addComponent(jbAtualizaTabelaNormal)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -191,7 +214,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                         venda.getCliente().getCnpj(), 
                         "R$ " + venda.getValortotal().toString(),
                         ultimaAtualizacao.format(formatador), 
-                        StatusVendaEnum.porCodigo(venda.getId_status())
+                        StatusVendaEnum.porCodigo(venda.getId_status()).getDescricao()
                     }
                 );
             });
@@ -261,7 +284,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                                     totalVendasFinal = totalVendasFinal.add(vendasRs.getBigDecimal("valortotal"));
                                 break;
                             }
-                            subTabelaPorCliente.addRow(new Object[]{vendasRs.getInt("id"),vendasRs.getBigDecimal("valortotal"),StatusVendaEnum.porCodigo(vendasRs.getInt("id_status"))});
+                            subTabelaPorCliente.addRow(new Object[]{vendasRs.getInt("id"),"R$ " + vendasRs.getBigDecimal("valortotal").toString(),StatusVendaEnum.porCodigo(vendasRs.getInt("id_status")).getDescricao()});
                         }
                         subTabelaPorCliente.addRow(new Object[]{""});
                         subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
@@ -315,10 +338,10 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                         subTabelaSituacao.addColumn("CNPJ");
 
                         vendasVo.forEach((vendaVO) -> {
-                            subTabelaSituacao.addRow(new Object[]{vendaVO.getId(),vendaVO.getValortotal(),vendaVO.getCliente().getNome(),vendaVO.getCliente().getCnpj()});
+                            subTabelaSituacao.addRow(new Object[]{vendaVO.getId(),"R$ " + vendaVO.getValortotal().toString(),vendaVO.getCliente().getNome(),vendaVO.getCliente().getCnpj()});
                         });
                         
-                        gerarTabela.addLinha(new Object[]{StatusVendaEnum.porCodigo(i).toString().toUpperCase(),subTabelaSituacao});
+                        gerarTabela.addLinha(new Object[]{StatusVendaEnum.porCodigo(i).getDescricao().toUpperCase(),subTabelaSituacao});
                     }
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Erro ao carregar vendas\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -354,6 +377,46 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
     private void jrbPorStatusVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbPorStatusVendaActionPerformed
         iniciarTabelaConsolidado(2);
     }//GEN-LAST:event_jrbPorStatusVendaActionPerformed
+
+    private void jbEditarVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarVendaActionPerformed
+        Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
+        
+        if(dadosLinhaSelecionada.isEmpty()){
+             JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }else{
+            NovaVendaView telaEdicaoVenda;
+            try {
+                telaEdicaoVenda = new NovaVendaView(new VendaController(vendaController.getVendaById(Integer.parseInt(dadosLinhaSelecionada.get("ID")))));
+                ExibirJanelaUtil.abrirFormulario(telaEdicaoVenda, super.getDesktopPane());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Erro ao buscar a venda para edição.", "Aviso", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jbEditarVendaActionPerformed
+
+    private void jbAtualizaTabelaNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAtualizaTabelaNormalActionPerformed
+        iniciarTabelaNormal();
+    }//GEN-LAST:event_jbAtualizaTabelaNormalActionPerformed
+
+    private void jbRemoverVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbRemoverVendaActionPerformed
+       Map<String,String> dadosLinhaSelecionada = gerarTabela.dadosLinhaSelecionada();
+        if(dadosLinhaSelecionada.isEmpty()){
+             JOptionPane.showMessageDialog(null, "Nenhum registro selecionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }else if(!dadosLinhaSelecionada.get("Status").equals(StatusVendaEnum.porCodigo(1).getDescricao())){
+            JOptionPane.showMessageDialog(null, "Você só pode excluir vendas em digitação.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }else{
+             int resposta = JOptionPane.showConfirmDialog(null,"Tem certeza que deseja excluir a venda selecionada?\n(Esta ação é permanente e não pode ser desfeita)",
+             "Confirmação",JOptionPane.YES_NO_OPTION);
+               if(resposta == JOptionPane.YES_OPTION){
+                 try {
+                     vendaController.excluirVenda(Integer.parseInt(dadosLinhaSelecionada.get("ID")));
+                     iniciarTabelaNormal();
+                 } catch (SQLException ex) {
+                     JOptionPane.showMessageDialog(null, "Erro ao exclur a venda", "Erro", JOptionPane.ERROR_MESSAGE);
+                 }
+               }
+           }
+    }//GEN-LAST:event_jbRemoverVendaActionPerformed
     
     private void switchBotoes(boolean b){
         jbViewNormal.setEnabled(b);
@@ -364,11 +427,13 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
         
         jbEditarVenda.setEnabled(!b);
         jbRemoverVenda.setEnabled(!b);
+        jbAtualizaTabelaNormal.setEnabled(!b);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgTipoConsolidado;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton jbAtualizaTabelaNormal;
     private javax.swing.JButton jbEditarVenda;
     private javax.swing.JButton jbRemoverVenda;
     private javax.swing.JButton jbViewConsolidada;

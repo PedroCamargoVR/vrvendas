@@ -53,7 +53,7 @@ public class VendaDao {
                         if (rs.next()) {
                             Integer idGerado = rs.getInt(1);
 
-                            Map<ProdutoModel, Integer> produtos = venda.getProdutosSelecionados();
+                            Map<ProdutoModel, Integer> produtos = venda.getProdutosVenda();
 
                             produtos.forEach((produto,quantidade) -> {
                                 sql.setLength(0);                            
@@ -108,7 +108,7 @@ public class VendaDao {
                 int linhasAfetadas = ps.executeUpdate();
                 
                 if(linhasAfetadas > 0){
-                    Map<ProdutoModel, Integer> produtos = venda.getProdutosSelecionados();
+                    Map<ProdutoModel, Integer> produtos = venda.getProdutosVenda();
                     ArrayList<Integer> idsProdutosVendaBanco = getProdutosVendaBanco(venda.getId());
                     
                     produtos.forEach((produto,quantidade) -> {
@@ -165,7 +165,7 @@ public class VendaDao {
                             }
                         }
                         
-                        ArrayList<Integer> idsProdutosVendaModel = venda.getIdsProdutosSelecionados();
+                        ArrayList<Integer> idsProdutosVendaModel = venda.getIdsProdutosVenda();
                         idsProdutosVendaBanco.forEach((idProduto) -> {
                             /**
                              * Verifica se o ID do produto que está no banco existe nos produtos presentes na VendaModel
@@ -185,10 +185,10 @@ public class VendaDao {
                                     psDelete.execute();
                                 } catch (SQLException ex) {
                                     try {
-                                    conn.rollback();
-                                } catch (SQLException exRollback) {
-                                    throw new RuntimeException(exRollback.getMessage());
-                                }
+                                        conn.rollback();
+                                    } catch (SQLException exRollback) {
+                                        throw new RuntimeException(exRollback.getMessage());
+                                    }
                                     throw new RuntimeException(ex.getMessage());
                                 }
                                 
@@ -246,7 +246,7 @@ public class VendaDao {
         sql.setLength(0);
         sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
         sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
-        sql.append("ORDER BY v.id_status");
+        sql.append("ORDER BY v.id");
         
         try(Connection conn = connF.getConnection()){
             PreparedStatement ps = conn.prepareStatement(sql.toString());
@@ -304,6 +304,134 @@ public class VendaDao {
             ps.setInt(1,idVenda);
             
             ResultSet rs = ps.executeQuery();
+            return rs;
+        }
+    }
+
+    public void excluirVenda(Integer idVenda) throws SQLException {
+        try(Connection conn = connF.getConnection()){
+            conn.setAutoCommit(false);
+            
+            try{
+                sql.setLength(0);
+                sql.append("DELETE FROM vendaproduto ");
+                sql.append("WHERE id_venda = ? ");
+
+                PreparedStatement ps = conn.prepareStatement(sql.toString());
+                ps.setInt(1,idVenda);
+                ps.execute();
+                
+                sql.setLength(0);
+                sql.append("DELETE FROM venda ");
+                sql.append("WHERE id = ? ");
+                
+                ps = conn.prepareStatement(sql.toString());
+                ps.setInt(1,idVenda);
+                ps.execute();
+                
+                conn.commit();
+            }catch(SQLException e){
+                try {
+                    conn.rollback();
+                } catch (SQLException exRollback) {
+                    throw new RuntimeException(exRollback.getMessage());
+                }
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+    }
+
+    public void atualizarStatusVenda(Integer idVenda,Integer idStatus) throws SQLException {
+        sql.setLength(0);
+        sql.append("UPDATE venda ");
+        sql.append("SET id_status = ? ");
+        sql.append("WHERE id = ? ");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idStatus);
+            ps.setInt(2,idVenda);
+            
+            ps.execute();
+        }
+    }
+    
+    public void inserirProdutoVendaProdutoErro(Integer idVendaProduto, String motivo) throws SQLException{
+        sql.setLength(0);
+        sql.append("SELECT * FROM public.vendaprodutoerrofinalizacao ");
+        sql.append("WHERE id_vendaproduto = ? ");
+        PreparedStatement ps;
+        
+        try(Connection conn = connF.getConnection()){
+            ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idVendaProduto);
+            
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.next()){
+                sql.setLength(0);
+                sql.append("UPDATE public.vendaprodutoerrofinalizacao ");
+                sql.append("SET motivoerro = ? ");
+                sql.append("WHERE id_vendaproduto = ? ");
+
+                ps = conn.prepareStatement(sql.toString());
+
+                ps.setString(1,motivo);
+                ps.setInt(2,idVendaProduto);
+
+                ps.execute();
+            }else{
+                sql.setLength(0);
+                sql.append("INSERT INTO public.vendaprodutoerrofinalizacao ");
+                sql.append("(id_vendaproduto, motivoerro) ");
+                sql.append("VALUES(?, ?) ");
+
+                ps = conn.prepareStatement(sql.toString());
+
+                ps.setInt(1,idVendaProduto);
+                ps.setString(2,motivo);
+
+                ps.execute();
+            }
+        }
+        
+    }
+    
+    public void removeProdutoVendaProdutoErro(Integer idVendaProduto) throws SQLException{
+        sql.setLength(0);
+        sql.append("DELETE FROM public.vendaprodutoerrofinalizacao ");
+        sql.append("WHERE id_vendaproduto = ? ");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idVendaProduto);
+            
+            ps.execute();
+        }
+        
+    }
+    
+    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException{
+        
+        sql.setLength(0);
+        sql.append("SELECT p.id,vpe.id_vendaproduto,vpe.motivoerro,p.descricao,vp.quantidade ");
+        sql.append("FROM vendaprodutoerrofinalizacao vpe ");
+        sql.append("INNER JOIN vendaproduto vp on vp.id = vpe.id_vendaproduto ");
+        sql.append("INNER JOIN produtos p on p.id = vp.id_produto ");
+        sql.append("WHERE vpe.id_vendaproduto in (");
+        sql.append("SELECT id FROM vendaproduto WHERE id_venda = ?");
+        sql.append(")");
+        
+        try(Connection conn = connF.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            
+            ps.setInt(1,idVenda);
+            
+            ResultSet rs = ps.executeQuery();
+            
             return rs;
         }
     }

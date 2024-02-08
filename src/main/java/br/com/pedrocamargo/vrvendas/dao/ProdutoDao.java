@@ -1,57 +1,24 @@
 package br.com.pedrocamargo.vrvendas.dao;
 
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
+import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.FakeProdutoAPIService;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
-import com.google.gson.Gson;
-import java.io.IOException;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.StringJoiner;
-import javax.swing.JOptionPane;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class ProdutoDao {
     private ConnectionFactory connF;
-    OkHttpClient client;
     private StringBuilder sql;
+    private FakeProdutoAPIService fakeProdutoApiService;
     
     public ProdutoDao(){
+        this.fakeProdutoApiService = new FakeProdutoAPIService();
         this.connF = new ConnectionFactory();
-        this.client = new OkHttpClient();
         this.sql = new StringBuilder();
     }
-    
-    public ProdutoModel[] getProdutosApi(){
-        ProdutoModel[] produtos = null;
-        
-        Request request = new Request.Builder()
-                .url("http://192.168.1.104:3000/produtos")
-                .build();
-        
-        try (Response response = client.newCall(request).execute()) {
-            
-            if (response.isSuccessful() && response.body() != null) {
-                String jsonResponse = response.body().string();
-
-                Gson gson = new Gson();
-                produtos = gson.fromJson(jsonResponse, ProdutoModel[].class);
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Erro ao capturar produtos da API\n"+response, "Erro", JOptionPane.ERROR_MESSAGE);
-                System.out.println("Falha na requisição: " + response);
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao capturar produtos da API\n"+e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-        return produtos;
-    }
-    
     
     public void salvarProdutoLote(ProdutoModel[] produtos) throws SQLException{
         if(produtos.length > 0){
@@ -110,7 +77,7 @@ public class ProdutoDao {
     }
     
     public void sincronizarProdutosApiBdLocal() throws SQLException{
-        ProdutoModel[] produtos = getProdutosApi();
+        ProdutoModel[] produtos = fakeProdutoApiService.getProdutosApi();
         if(produtos != null){
             salvarProdutoLote(produtos);
         }

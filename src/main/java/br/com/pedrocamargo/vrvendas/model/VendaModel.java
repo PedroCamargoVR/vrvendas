@@ -63,11 +63,11 @@ public class VendaModel {
        produtos.put(produto,quantidadeNova);   
     }
 
-    public Map<ProdutoModel, Integer> getProdutosSelecionados() {
+    public Map<ProdutoModel, Integer> getProdutosVenda() {
         return produtos;
     }
     
-    public ArrayList<Integer> getIdsProdutosSelecionados(){
+    public ArrayList<Integer> getIdsProdutosVenda(){
         ArrayList<Integer> ids = new ArrayList<>();
         
         produtos.forEach((produto,quantidade)->{

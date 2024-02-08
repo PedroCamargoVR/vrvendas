@@ -73,7 +73,7 @@ public class GerarTabelaUtil {
         if (linhaSelecionada != -1) {
             int modelRow = table.convertRowIndexToModel(linhaSelecionada);    
             for(int i = 0; i < nomeColunas.length; i++){
-                dados.put((String) nomeColunas[i], (String) table.getModel().getValueAt(modelRow, i));
+                dados.put(nomeColunas[i].toString(), table.getModel().getValueAt(modelRow, i).toString());
             }
         }
         return dados;
