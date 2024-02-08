@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import util.GerarTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
 
 public class CadastroClientesView extends javax.swing.JInternalFrame {
     

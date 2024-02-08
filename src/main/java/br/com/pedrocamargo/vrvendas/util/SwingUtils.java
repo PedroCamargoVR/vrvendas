@@ -1,4 +1,4 @@
-package util;
+package br.com.pedrocamargo.vrvendas.util;
 
 import br.com.pedrocamargo.vrvendas.controller.ClienteController;
 import br.com.pedrocamargo.vrvendas.controller.ProdutoController;

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
-import util.GerarTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
 
 public class ConsultaProdutosView extends javax.swing.JInternalFrame {
 

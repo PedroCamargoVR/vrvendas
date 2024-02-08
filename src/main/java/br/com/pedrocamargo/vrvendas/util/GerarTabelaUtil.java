@@ -1,4 +1,4 @@
-package util;
+package br.com.pedrocamargo.vrvendas.util;
 
 import javax.swing.JTable;
 import javax.swing.JScrollPane;

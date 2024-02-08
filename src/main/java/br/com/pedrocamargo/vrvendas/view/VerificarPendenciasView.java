@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import util.GerarTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
 
 public class VerificarPendenciasView extends javax.swing.JInternalFrame {
 

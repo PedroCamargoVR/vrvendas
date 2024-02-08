@@ -1,4 +1,4 @@
-package util;
+package br.com.pedrocamargo.vrvendas.util;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

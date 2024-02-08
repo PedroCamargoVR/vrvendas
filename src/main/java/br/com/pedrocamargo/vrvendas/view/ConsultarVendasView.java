@@ -20,10 +20,10 @@ import java.util.logging.Logger;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import util.EditarCelulaTabelaUtil;
-import util.ExibirJanelaUtil;
-import util.GerarTabelaUtil;
-import util.GerarTabelaEmCelulaUtil;
+import br.com.pedrocamargo.vrvendas.util.EditarCelulaTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.ExibirJanelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaEmCelulaUtil;
 
 public class ConsultarVendasView extends javax.swing.JInternalFrame {
 

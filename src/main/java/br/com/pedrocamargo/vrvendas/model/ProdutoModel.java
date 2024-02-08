@@ -3,7 +3,7 @@ package br.com.pedrocamargo.vrvendas.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import util.ConverterTimeStampUtil;
+import br.com.pedrocamargo.vrvendas.util.ConverterTimeStampUtil;
 
 public class ProdutoModel {
     private Integer id;

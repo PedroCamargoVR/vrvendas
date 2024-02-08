@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import util.ExibirJanelaUtil;
-import util.GerarTabelaUtil;
-import util.SwingUtils;
+import br.com.pedrocamargo.vrvendas.util.ExibirJanelaUtil;
+import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import br.com.pedrocamargo.vrvendas.util.SwingUtils;
 
 
 public class NovaVendaView extends javax.swing.JInternalFrame {

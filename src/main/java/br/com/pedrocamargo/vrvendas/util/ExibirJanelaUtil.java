@@ -1,4 +1,4 @@
-package util;
+package br.com.pedrocamargo.vrvendas.util;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import util.ExibirJanelaUtil;
+import br.com.pedrocamargo.vrvendas.util.ExibirJanelaUtil;
 
 public class Main extends javax.swing.JFrame {
     private ProdutoController produtoController;
