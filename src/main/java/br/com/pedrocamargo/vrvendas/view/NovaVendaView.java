@@ -72,7 +72,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         jpVendaBotoes = new javax.swing.JPanel();
         jbVendaSalvar = new javax.swing.JButton();
         jbVendaConferirEstoque = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jbFinalizar = new javax.swing.JButton();
         jbVerificarPendencias = new javax.swing.JButton();
         jpVendaFormulario = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -125,11 +125,11 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalizar.png"))); // NOI18N
-        jButton1.setText("Finalizar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jbFinalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalizar.png"))); // NOI18N
+        jbFinalizar.setText("Finalizar");
+        jbFinalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jbFinalizarActionPerformed(evt);
             }
         });
 
@@ -149,7 +149,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jbVendaSalvar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(jbFinalizar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbVerificarPendencias)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -163,7 +163,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                 .addGroup(jpVendaBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbVendaSalvar)
                     .addComponent(jbVendaConferirEstoque)
-                    .addComponent(jButton1)
+                    .addComponent(jbFinalizar)
                     .addComponent(jbVerificarPendencias))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -720,7 +720,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jbVendaSalvarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jbFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbFinalizarActionPerformed
         if(jtfVendaIdCliente.getText().isEmpty() || jtfVendaIdCliente.getText() == null){
             JOptionPane.showMessageDialog(null, "Preencha o campo cliente", "Erro", JOptionPane.WARNING_MESSAGE);
         }else if(vendaController.getVendaAtual().getProdutosVenda().size() == 0){
@@ -757,7 +757,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             
         }
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jbFinalizarActionPerformed
 
     private void jbVerificarPendenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbVerificarPendenciasActionPerformed
         VerificarPendenciasView verificarPendencias = new VerificarPendenciasView(vendaController.getVendaAtual().getId());
@@ -785,6 +785,9 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
        if(this.vendaController.getVendaAtual().getId_status() != 2){
            jbVerificarPendencias.setEnabled(false);
        }
+       if(this.vendaController.getVendaAtual().getId_status() == 3 || this.vendaController.getVendaAtual().getId() < 1){
+           jbFinalizar.setEnabled(false);
+       }
     }
     
     private void iniciarNovaTela(Integer idVenda) throws SQLException{
@@ -793,10 +796,10 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton jbFinalizar;
     private javax.swing.JButton jbPesquisaCliente;
     private javax.swing.JButton jbPesquisaProduto;
     private javax.swing.JButton jbVendaAddProduto;

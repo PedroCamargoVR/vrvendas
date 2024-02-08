@@ -204,7 +204,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
         DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         
         try {
-            vendas = vendaController.getAllVendas();
+            vendas = vendaController.getAllVendasVo();
             vendas.forEach((venda) -> {
                 LocalDateTime ultimaAtualizacao = LocalDateTime.ofInstant(venda.getUpdated_at().toInstant(), ZoneId.of("America/Sao_Paulo"));
                 

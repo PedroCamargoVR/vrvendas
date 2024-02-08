@@ -4,6 +4,7 @@ import br.com.pedrocamargo.vrvendas.interfaces.VendaControllerInterface;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
 import br.com.pedrocamargo.vrvendas.service.ProdutoService;
 import br.com.pedrocamargo.vrvendas.service.VendaService;
+import br.com.pedrocamargo.vrvendas.store.VendaStorage;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -15,28 +16,34 @@ import java.util.logging.Logger;
 public class VendaController implements VendaControllerInterface {
     
     private ProdutoService produtoService;
-    private VendaModel vendaAtual;
     private VendaService vendaService;
+    private VendaStorage vendaStorage;
     
     public VendaController(){
         this.produtoService = new ProdutoService();
         this.vendaService = new VendaService();
+        this.vendaStorage = new VendaStorage();
     }
     
     public VendaController(VendaModel venda){
         this.produtoService = new ProdutoService();
         this.vendaService = new VendaService();
-        this.vendaAtual = venda;
+        this.vendaStorage = new VendaStorage(venda);
     }
 
     @Override
     public void criarNovaVenda() {
-        this.vendaAtual = new VendaModel(0, 0, 1, new BigDecimal(0));
+        this.vendaStorage.criarNovaVenda();
     }
     
     @Override
     public VendaModel getVendaAtual() {
-        return vendaAtual;
+        return this.vendaStorage.getVendaAtual();
+    }
+    
+    @Override
+    public BigDecimal getValorTotalVenda() {
+        return this.vendaStorage.getValorTotalVenda();
     }
     
     @Override
@@ -50,29 +57,29 @@ public class VendaController implements VendaControllerInterface {
     }
     
     @Override
+    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
+        return vendaService.getVendasVoByIdStatus(idStatus);
+    }
+    
+    @Override
     public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException {
         return vendaService.getVendasByIdCliente(idCliente);
     }
     
     @Override
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
-        return vendaService.getVendasVoByIdStatus(idStatus);
+    public ArrayList<VendaVO> getAllVendasVo() throws SQLException {
+        return vendaService.getAllVendasVo();
     }
     
     @Override
     public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException{
         return vendaService.getProdutosVendaByIdVenda(idVenda);
     }
-
-    @Override
-    public ArrayList<VendaVO> getAllVendas() throws SQLException {
-        return vendaService.getAllVendasVo();
-    }
-
+    
     @Override
     public void atualizaEstoqueProdutosVendaAtual() throws SQLException {
         try{
-            this.vendaAtual.getProdutosVenda().forEach((produto,quantidade) -> {
+            this.vendaStorage.getVendaAtual().getProdutosVenda().forEach((produto,quantidade) -> {
                 try{
                     produtoService.atualizaEstoqueProduto(produto);
                 } catch(SQLException e){
@@ -83,11 +90,6 @@ public class VendaController implements VendaControllerInterface {
             throw new SQLException(ex.getMessage());
         }
         
-    }
-
-    @Override
-    public BigDecimal getValorTotalVenda() {
-        return this.vendaAtual.getValortotal();
     }
 
     @Override

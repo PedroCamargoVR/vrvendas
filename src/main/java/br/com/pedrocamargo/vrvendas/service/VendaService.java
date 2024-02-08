@@ -2,6 +2,8 @@ package br.com.pedrocamargo.vrvendas.service;
 
 import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
 import br.com.pedrocamargo.vrvendas.dao.VendaDao;
+import br.com.pedrocamargo.vrvendas.dao.VendaProdutoDao;
+import br.com.pedrocamargo.vrvendas.dao.VendaProdutoErroFinalizacaoDao;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.FakeProdutoAPIService;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.EnviarProdutoModel;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.ErroFinalizacaoResponseModel;
@@ -16,18 +18,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class VendaService {
     
     private ProdutoDao produtoDao;
     private VendaDao vendaDao;
+    private VendaProdutoDao vendaProdutoDao;
+    private VendaProdutoErroFinalizacaoDao vendaProdutoErroFinalizacaoDao;
     private FakeProdutoAPIService fakeProdutoApiService;
     
     public VendaService(){
         this.vendaDao = new VendaDao();
         this.produtoDao = new ProdutoDao();
         this.fakeProdutoApiService = new FakeProdutoAPIService();
+        this.vendaProdutoDao = new VendaProdutoDao();
+        this.vendaProdutoErroFinalizacaoDao = new VendaProdutoErroFinalizacaoDao();
     }
 
     public Integer salvarVenda(VendaModel venda) throws SQLException {
@@ -63,8 +71,8 @@ public class VendaService {
         return vendaDao.getVendasByIdCliente(idCliente);
     }
     
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
-        ResultSet rs = vendaDao.getVendasVoByStatus(idStatus);
+    public ArrayList<VendaVO> getAllVendasVo() throws SQLException {
+        ResultSet rs = vendaDao.getAllVendasVo();
         ArrayList<VendaVO> vendas = new ArrayList<>();
         while(rs.next()){
            vendas.add(new VendaVO(
@@ -85,9 +93,9 @@ public class VendaService {
         
         return vendas;
     }
-
-    public ArrayList<VendaVO> getAllVendasVo() throws SQLException {
-        ResultSet rs = vendaDao.getAllVendasVo();
+    
+    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
+        ResultSet rs = vendaDao.getVendasVoByStatus(idStatus);
         ArrayList<VendaVO> vendas = new ArrayList<>();
         while(rs.next()){
            vendas.add(new VendaVO(
@@ -136,13 +144,16 @@ public class VendaService {
     
     public Integer finalizarVenda(VendaModel venda) throws Exception{
         List<EnviarProdutoModel> produtosParaEnvio = new ArrayList<>();
+        List<Integer> vendaProdutoErroIds = new ArrayList<>();
+        
         if(venda.getId_status() == 1){
             venda.getProdutosVenda().forEach((produto,quantidade) -> {
                 produtosParaEnvio.add(new EnviarProdutoModel(produto.getId(),quantidade));
             });
         }else{
-            ResultSet rsProdutos = vendaDao.getProdutosVendaErroFinalizacao(venda.getId());
+            ResultSet rsProdutos = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
             while(rsProdutos.next()){
+                vendaProdutoErroIds.add(rsProdutos.getInt("id_vendaproduto"));
                 produtosParaEnvio.add(new EnviarProdutoModel(rsProdutos.getInt("id"),rsProdutos.getInt("quantidade")));
             }
         }
@@ -152,8 +163,15 @@ public class VendaService {
         if(responseApi.containsKey(200)){
             try{
                 vendaDao.atualizarStatusVenda(venda.getId(),3);
+                vendaProdutoErroIds.forEach((p) -> {
+                    try {
+                        vendaProdutoErroFinalizacaoDao.removeProdutoVendaProdutoErro(p);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex.getMessage());
+                    }
+                });
                 return 200;
-            }catch(SQLException e){
+            }catch(Exception e){
                 throw new RuntimeException(e.getMessage());
             }
         }else if(responseApi.containsKey(207)){
@@ -161,21 +179,38 @@ public class VendaService {
                 vendaDao.atualizarStatusVenda(venda.getId(),2);
                 ErroFinalizacaoResponseModel erroFinalizacao = fakeProdutoApiService.obterObjetoErro(responseApi.get(207));
                 
-                ResultSet idsVendaProduto = vendaDao.getProdutosVendaByIdVenda(venda.getId());
-                Map<Integer,Integer> idProdutoVendaProduto;
-                idProdutoVendaProduto = new HashMap<>();
+                ResultSet idsVendaProduto = vendaProdutoDao.getVendaProdutoByIdVenda(venda.getId());
+                ResultSet idsProdutoErro = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
+                
+                Map<Integer,Integer> idProdutoIdVendaProduto = new HashMap<>();
+                Map<Integer,Integer> idProdutoIdVendaProdutoError = new HashMap<>();
                 
                 while(idsVendaProduto.next()){
-                    idProdutoVendaProduto.put(idsVendaProduto.getInt("id_produto"),idsVendaProduto.getInt("id"));
+                    idProdutoIdVendaProduto.put(idsVendaProduto.getInt("id_produto"),idsVendaProduto.getInt("id"));
                 }
+                
+                while(idsProdutoErro.next()){
+                    idProdutoIdVendaProdutoError.put(idsProdutoErro.getInt("id"),idsProdutoErro.getInt("id_vendaproduto"));
+                } 
                 
                 erroFinalizacao.getErrors().forEach((id,erro) -> {
                     try{
-                        insertProdutoVendaProdutoErro(idProdutoVendaProduto.get(id), erro.getError());
+                        insertProdutoVendaProdutoErro(idProdutoIdVendaProduto.get(id), erro.getError());
                     }catch(SQLException e){
                         throw new RuntimeException(e.getMessage());
                     }
                 });
+                
+                idProdutoIdVendaProdutoError.forEach((idProduto,idVendaProduto) -> {
+                    if(!erroFinalizacao.getErrors().containsKey(idProduto)){
+                        try {
+                            vendaProdutoErroFinalizacaoDao.removeProdutoVendaProdutoErro(idVendaProduto);
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex.getMessage());
+                        }
+                    }
+                });
+                
                 return 207;
             }catch(SQLException e){
                 throw new RuntimeException(e.getMessage());
@@ -190,14 +225,14 @@ public class VendaService {
     }
 
     public void insertProdutoVendaProdutoErro(Integer idVendaProduto, String motivo) throws SQLException {
-        vendaDao.inserirProdutoVendaProdutoErro(idVendaProduto, motivo);
+        vendaProdutoErroFinalizacaoDao.inserirProdutoVendaProdutoErro(idVendaProduto, motivo);
     }
 
     public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException {
-        return vendaDao.getProdutosVendaByIdVenda(idVenda);
+        return vendaProdutoDao.getVendaProdutoByIdVenda(idVenda);
     }
 
     public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
-        return vendaDao.getProdutosVendaErroFinalizacao(idVenda);
+        return vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(idVenda);
     }
 }

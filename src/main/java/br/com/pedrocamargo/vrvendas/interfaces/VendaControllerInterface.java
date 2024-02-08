@@ -15,13 +15,13 @@ public interface VendaControllerInterface {
     
     public VendaModel getVendaById(Integer idVenda) throws SQLException;
     
-    public VendaVO getVendaVoById(Integer idVenda) throws SQLException;
-    
     public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException;
     
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException;
+    public ArrayList<VendaVO> getAllVendasVo() throws SQLException;
     
-    public ArrayList<VendaVO> getAllVendas() throws SQLException;
+    public VendaVO getVendaVoById(Integer idVenda) throws SQLException;    
+    
+    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException;
     
     public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException;
     
