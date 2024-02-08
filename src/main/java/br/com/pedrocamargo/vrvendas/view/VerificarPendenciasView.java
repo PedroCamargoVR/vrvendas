@@ -62,7 +62,7 @@ public class VerificarPendenciasView extends javax.swing.JInternalFrame {
         setTitle("Verificação de Pendencias");
         setPreferredSize(new java.awt.Dimension(600, 500));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/atencao.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/atencao.png"))); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         jLabel2.setText("Os produtos abaixo estão com pendência e impedindo a finalização da venda");

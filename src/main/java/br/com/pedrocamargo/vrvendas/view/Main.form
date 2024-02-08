@@ -7,7 +7,7 @@
         <Menu class="javax.swing.JMenu" name="jmClientes">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/cliente.png"/>
+              <Image iconType="3" name="/image/cliente.png"/>
             </Property>
             <Property name="mnemonic" type="int" value="67"/>
             <Property name="text" type="java.lang.String" value="Clientes"/>
@@ -26,7 +26,7 @@
         <Menu class="javax.swing.JMenu" name="jmNovaVenda">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/novavenda.png"/>
+              <Image iconType="3" name="/image/novavenda.png"/>
             </Property>
             <Property name="mnemonic" type="int" value="78"/>
             <Property name="text" type="java.lang.String" value="Nova Venda"/>
@@ -41,7 +41,7 @@
         <Menu class="javax.swing.JMenu" name="jmConsultaVenda">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/consultarvenda.png"/>
+              <Image iconType="3" name="/image/consultarvenda.png"/>
             </Property>
             <Property name="mnemonic" type="int" value="79"/>
             <Property name="text" type="java.lang.String" value="Consultar Vendas"/>

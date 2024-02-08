@@ -61,7 +61,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
         setTitle("Consultar Vendas");
         setPreferredSize(new java.awt.Dimension(900, 730));
 
-        jbViewConsolidada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/consolidada.png"))); // NOI18N
+        jbViewConsolidada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/consolidada.png"))); // NOI18N
         jbViewConsolidada.setText("Visualização Consolidada");
         jbViewConsolidada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -69,7 +69,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbViewNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/normal.png"))); // NOI18N
+        jbViewNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/normal.png"))); // NOI18N
         jbViewNormal.setText("Visualização Normal");
         jbViewNormal.setEnabled(false);
         jbViewNormal.addActionListener(new java.awt.event.ActionListener() {
@@ -97,21 +97,21 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbEditarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editar.png"))); // NOI18N
+        jbEditarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/editar.png"))); // NOI18N
         jbEditarVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbEditarVendaActionPerformed(evt);
             }
         });
 
-        jbRemoverVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove.png"))); // NOI18N
+        jbRemoverVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/remove.png"))); // NOI18N
         jbRemoverVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbRemoverVendaActionPerformed(evt);
             }
         });
 
-        jbAtualizaTabelaNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
+        jbAtualizaTabelaNormal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/conferir.png"))); // NOI18N
         jbAtualizaTabelaNormal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbAtualizaTabelaNormalActionPerformed(evt);

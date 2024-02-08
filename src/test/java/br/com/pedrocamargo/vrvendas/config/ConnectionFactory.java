@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import org.flywaydb.core.Flyway;
 
+
 public class ConnectionFactory {
     private EnvConfig envConfig;
     private String host;
@@ -23,6 +24,7 @@ public class ConnectionFactory {
     }
 
     public Connection getConnection() throws SQLException {
+        
         return DriverManager.getConnection("jdbc:postgresql://"+host+":"+porta+"/"+nomeBd+"?user="+usuario+"&password="+senha);
     }
     

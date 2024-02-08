@@ -74,7 +74,7 @@ public class ConsultaProdutosView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/confirmar.png"))); // NOI18N
+        jbConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/confirmar.png"))); // NOI18N
         jbConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbConfirmarActionPerformed(evt);

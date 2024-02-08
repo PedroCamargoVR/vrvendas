@@ -1,20 +1,20 @@
 package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ProdutoController;
-import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
-import br.com.pedrocamargo.vrvendas.service.VendaService;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import br.com.pedrocamargo.vrvendas.util.ExibirJanelaUtil;
+import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 
 public class Main extends javax.swing.JFrame {
     private ProdutoController produtoController;
+    private ConnectionFactory connF;
    
     public Main() {
-        //Injeta dependencia do ProdutoController
+        //Injeta dependencia do ProdutoController e ConnectionFactory para rodar as migrations
         this.produtoController = new ProdutoController();
+        this.connF = new ConnectionFactory();
+        connF.executaMigrations();
         initComponents();
         //Atualiza dados dos produtos ao abrir aplicacao
         try {
@@ -50,7 +50,7 @@ public class Main extends javax.swing.JFrame {
             .addGap(0, 798, Short.MAX_VALUE)
         );
 
-        jmClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cliente.png"))); // NOI18N
+        jmClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/cliente.png"))); // NOI18N
         jmClientes.setMnemonic('C');
         jmClientes.setText("Clientes");
         jmClientes.setMaximumSize(new java.awt.Dimension(160, 32767));
@@ -67,7 +67,7 @@ public class Main extends javax.swing.JFrame {
         });
         jMenuBar1.add(jmClientes);
 
-        jmNovaVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/novavenda.png"))); // NOI18N
+        jmNovaVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/novavenda.png"))); // NOI18N
         jmNovaVenda.setMnemonic('N');
         jmNovaVenda.setText("Nova Venda");
         jmNovaVenda.setPreferredSize(new java.awt.Dimension(160, 30));
@@ -78,7 +78,7 @@ public class Main extends javax.swing.JFrame {
         });
         jMenuBar1.add(jmNovaVenda);
 
-        jmConsultaVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/consultarvenda.png"))); // NOI18N
+        jmConsultaVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/consultarvenda.png"))); // NOI18N
         jmConsultaVenda.setMnemonic('O');
         jmConsultaVenda.setText("Consultar Vendas");
         jmConsultaVenda.setPreferredSize(new java.awt.Dimension(160, 19));

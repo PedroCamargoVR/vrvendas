@@ -109,7 +109,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
         setTitle("Lançamento de Venda");
         setPreferredSize(new java.awt.Dimension(750, 600));
 
-        jbVendaSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/salvar.png"))); // NOI18N
+        jbVendaSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/salvar.png"))); // NOI18N
         jbVendaSalvar.setText("Salvar");
         jbVendaSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -117,7 +117,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbVendaConferirEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/conferir.png"))); // NOI18N
+        jbVendaConferirEstoque.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/conferir.png"))); // NOI18N
         jbVendaConferirEstoque.setText("Atualizar Produtos");
         jbVendaConferirEstoque.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -125,7 +125,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbFinalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/finalizar.png"))); // NOI18N
+        jbFinalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/finalizar.png"))); // NOI18N
         jbFinalizar.setText("Finalizar");
         jbFinalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -133,7 +133,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbVerificarPendencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/atencao.png"))); // NOI18N
+        jbVerificarPendencias.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/atencao.png"))); // NOI18N
         jbVerificarPendencias.setText("Verificar Pendências");
         jbVerificarPendencias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,7 +178,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jtfVendaProdutoDescricao.setEnabled(false);
 
-        jbPesquisaProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pesquisa-16.png"))); // NOI18N
+        jbPesquisaProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/pesquisa-16.png"))); // NOI18N
         jbPesquisaProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbPesquisaProdutoActionPerformed(evt);
@@ -198,7 +198,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbPesquisaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pesquisa-16.png"))); // NOI18N
+        jbPesquisaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/pesquisa-16.png"))); // NOI18N
         jbPesquisaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbPesquisaClienteActionPerformed(evt);
@@ -260,14 +260,14 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jlVendaQuantidade.setText("Quantidade");
 
-        jbVendaEditarProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/editar-16.png"))); // NOI18N
+        jbVendaEditarProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/editar-16.png"))); // NOI18N
         jbVendaEditarProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbVendaEditarProdutoActionPerformed(evt);
             }
         });
 
-        jbVendaRemoverProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove-16.png"))); // NOI18N
+        jbVendaRemoverProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/remove-16.png"))); // NOI18N
         jbVendaRemoverProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbVendaRemoverProdutoActionPerformed(evt);
@@ -278,7 +278,7 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
 
         jlDescricaoProduto.setText("Descrição");
 
-        jbVendaAddProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/adicionarabaixo-16.png"))); // NOI18N
+        jbVendaAddProduto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/adicionarabaixo-16.png"))); // NOI18N
         jbVendaAddProduto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbVendaAddProdutoActionPerformed(evt);

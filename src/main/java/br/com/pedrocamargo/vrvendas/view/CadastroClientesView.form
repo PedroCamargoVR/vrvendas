@@ -208,7 +208,7 @@
         <Component class="javax.swing.JButton" name="jbClienteNovo">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/novo.png"/>
+              <Image iconType="3" name="/image/novo.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Novo"/>
           </Properties>
@@ -219,7 +219,7 @@
         <Component class="javax.swing.JButton" name="jbClienteEditar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/edit.png"/>
+              <Image iconType="3" name="/image/edit.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Editar"/>
           </Properties>
@@ -230,7 +230,7 @@
         <Component class="javax.swing.JButton" name="jbClienteRemover">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/remove.png"/>
+              <Image iconType="3" name="/image/remove.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Remover"/>
           </Properties>
@@ -241,7 +241,7 @@
         <Component class="javax.swing.JButton" name="jbClienteSalvar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/salvar.png"/>
+              <Image iconType="3" name="/image/salvar.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Salvar"/>
           </Properties>
@@ -252,7 +252,7 @@
         <Component class="javax.swing.JButton" name="jbClienteCancelar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/cancel.png"/>
+              <Image iconType="3" name="/image/cancel.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
           </Properties>

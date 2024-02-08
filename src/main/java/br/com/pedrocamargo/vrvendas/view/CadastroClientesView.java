@@ -130,7 +130,7 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jbClienteNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/novo.png"))); // NOI18N
+        jbClienteNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/novo.png"))); // NOI18N
         jbClienteNovo.setText("Novo");
         jbClienteNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -138,7 +138,7 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbClienteEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/edit.png"))); // NOI18N
+        jbClienteEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/edit.png"))); // NOI18N
         jbClienteEditar.setText("Editar");
         jbClienteEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -146,7 +146,7 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbClienteRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/remove.png"))); // NOI18N
+        jbClienteRemover.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/remove.png"))); // NOI18N
         jbClienteRemover.setText("Remover");
         jbClienteRemover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +154,7 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbClienteSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/salvar.png"))); // NOI18N
+        jbClienteSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/salvar.png"))); // NOI18N
         jbClienteSalvar.setText("Salvar");
         jbClienteSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -162,7 +162,7 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
             }
         });
 
-        jbClienteCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cancel.png"))); // NOI18N
+        jbClienteCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/cancel.png"))); // NOI18N
         jbClienteCancelar.setText("Cancelar");
         jbClienteCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

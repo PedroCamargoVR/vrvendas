@@ -89,7 +89,7 @@
         <Component class="javax.swing.JButton" name="jbVendaSalvar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/salvar.png"/>
+              <Image iconType="3" name="/image/salvar.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Salvar"/>
           </Properties>
@@ -100,7 +100,7 @@
         <Component class="javax.swing.JButton" name="jbVendaConferirEstoque">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/conferir.png"/>
+              <Image iconType="3" name="/image/conferir.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Atualizar Produtos"/>
           </Properties>
@@ -111,7 +111,7 @@
         <Component class="javax.swing.JButton" name="jbFinalizar">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/finalizar.png"/>
+              <Image iconType="3" name="/image/finalizar.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Finalizar"/>
           </Properties>
@@ -122,7 +122,7 @@
         <Component class="javax.swing.JButton" name="jbVerificarPendencias">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/atencao.png"/>
+              <Image iconType="3" name="/image/atencao.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Verificar Pend&#xea;ncias"/>
           </Properties>
@@ -322,7 +322,7 @@
         <Component class="javax.swing.JButton" name="jbPesquisaProduto">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/pesquisa-16.png"/>
+              <Image iconType="3" name="/image/pesquisa-16.png"/>
             </Property>
           </Properties>
           <Events>
@@ -345,7 +345,7 @@
         <Component class="javax.swing.JButton" name="jbPesquisaCliente">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/pesquisa-16.png"/>
+              <Image iconType="3" name="/image/pesquisa-16.png"/>
             </Property>
           </Properties>
           <Events>
@@ -435,7 +435,7 @@
         <Component class="javax.swing.JButton" name="jbVendaEditarProduto">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/editar-16.png"/>
+              <Image iconType="3" name="/image/editar-16.png"/>
             </Property>
           </Properties>
           <Events>
@@ -445,7 +445,7 @@
         <Component class="javax.swing.JButton" name="jbVendaRemoverProduto">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/remove-16.png"/>
+              <Image iconType="3" name="/image/remove-16.png"/>
             </Property>
           </Properties>
           <Events>
@@ -465,7 +465,7 @@
         <Component class="javax.swing.JButton" name="jbVendaAddProduto">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/adicionarabaixo-16.png"/>
+              <Image iconType="3" name="/image/adicionarabaixo-16.png"/>
             </Property>
           </Properties>
           <Events>
