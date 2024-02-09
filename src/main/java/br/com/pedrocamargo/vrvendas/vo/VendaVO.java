@@ -1,11 +1,8 @@
 package br.com.pedrocamargo.vrvendas.vo;
 
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
-import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class VendaVO {
     private Integer id;

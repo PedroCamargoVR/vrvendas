@@ -1,7 +1,6 @@
 package br.com.pedrocamargo.vrvendas.interfaces;
 
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 

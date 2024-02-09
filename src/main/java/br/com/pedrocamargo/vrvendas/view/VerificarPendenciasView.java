@@ -4,8 +4,6 @@ import br.com.pedrocamargo.vrvendas.controller.VendaController;
 import java.awt.BorderLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
 

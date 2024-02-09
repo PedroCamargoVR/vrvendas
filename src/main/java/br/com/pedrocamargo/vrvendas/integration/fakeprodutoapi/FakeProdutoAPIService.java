@@ -3,7 +3,6 @@ package br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.EnviarProdutoModel;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.ErroFinalizacaoResponseModel;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;

@@ -6,7 +6,6 @@ import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.ListSelectionModel;
-import org.intellij.lang.annotations.JdkConstants;
 
 public class GerarTabelaUtil {
 

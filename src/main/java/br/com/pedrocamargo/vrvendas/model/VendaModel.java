@@ -77,6 +77,7 @@ public class VendaModel {
         return ids;
     }
 
+    //Getters e Setters
     public Integer getId() {
         return id;
     }
@@ -88,24 +89,28 @@ public class VendaModel {
     public Integer getId_status() {
         return id_status;
     }
+    
+    public String getStatus() {
+        return StatusVendaEnum.porCodigo(this.id_status).getDescricao();
+    }
 
     public BigDecimal getValortotal() {
         return valortotal.setScale(2, RoundingMode.HALF_UP);
     }
     
-    public String getStatus() {
-        return StatusVendaEnum.porCodigo(this.id_status).getDescricao();
+    public Timestamp getCreatedAt() {
+        return this.created_at;
     }
     
+    public Timestamp getupdatedAt() {
+        return this.updated_at;
+    }
+        
     public void setIdCliente(Integer idCliente) {
         this.id_cliente = idCliente;
     }
 
     public void setIdStatus(Integer idStatus) {
         this.id_status = idStatus;
-    }
-    
-    public void finalizarVenda() {
-        // TODO Implementação da lógica para gravar no banco de dados
     }
 }

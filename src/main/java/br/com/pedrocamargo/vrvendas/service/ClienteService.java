@@ -3,7 +3,6 @@ package br.com.pedrocamargo.vrvendas.service;
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.dao.ClienteDao;
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 

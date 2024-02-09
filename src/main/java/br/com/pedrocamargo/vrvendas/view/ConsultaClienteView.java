@@ -4,7 +4,6 @@ import br.com.pedrocamargo.vrvendas.controller.ClienteController;
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;

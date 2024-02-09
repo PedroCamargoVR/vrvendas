@@ -2,10 +2,6 @@ package br.com.pedrocamargo.vrvendas.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 public class EnvConfig {
     private Dotenv dotenv = Dotenv.configure().load();
     private String bdHost = dotenv.get("DATABASE_HOST");
