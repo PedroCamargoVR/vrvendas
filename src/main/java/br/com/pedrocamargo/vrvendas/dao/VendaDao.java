@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class VendaDao {
@@ -130,22 +131,24 @@ public class VendaDao {
         }
     }
     
-    public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException{
+    public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException{
+        List<VendaModel> vendas = new ArrayList<>();
         
         sql.setLength(0);
         sql.append("SELECT * FROM venda ");
         sql.append("WHERE id_cliente = ? ");
         sql.append("ORDER BY id_status");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString());){
             
             ps.setInt(1,idCliente);
-            
             ResultSet rs = ps.executeQuery();
-            return rs;
+            
+            while(rs.next()){
+                vendas.add(new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),rs.getBigDecimal("valortotal")));
+            }
         }
-        
+        return vendas;
     }
 
     public ResultSet getAllVendasVo() throws SQLException {

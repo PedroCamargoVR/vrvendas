@@ -1,18 +1,14 @@
 package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ClienteController;
+import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import java.awt.BorderLayout;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import java.util.List;
 
 public class CadastroClientesView extends javax.swing.JInternalFrame {
     
@@ -244,13 +240,13 @@ public class CadastroClientesView extends javax.swing.JInternalFrame {
         gerarTabela.limparTabela();
         
         try {
-            ResultSet rs = clienteController.getClientes();
+            List<ClienteModel> clientes = clienteController.getClientes();
             
             ArrayList<String[]> dadosTabela = new ArrayList<>();
             
-            while(rs.next()){
-                dadosTabela.add(new String[]{rs.getString("id"), rs.getString("nome"), rs.getString("nomefantasia"), rs.getString("razaosocial"),rs.getString("cnpj")});
-            }
+            clientes.forEach((cliente) -> {
+                dadosTabela.add(new String[]{cliente.getId().toString(), cliente.getNome(), cliente.getNomeFantasia(), cliente.getRazaoSocial(),cliente.getCnpj()});
+            });
             
             dadosTabela.forEach((linha) -> {
                 gerarTabela.addLinha(linha);

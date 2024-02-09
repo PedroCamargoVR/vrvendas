@@ -1,6 +1,7 @@
 package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ClienteController;
+import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.Map;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import java.util.List;
 
 public class ConsultaClienteView extends javax.swing.JInternalFrame {
 
@@ -28,13 +30,12 @@ public class ConsultaClienteView extends javax.swing.JInternalFrame {
         gerarTabelaConsulta.limparTabela();
         
         try {
-            ResultSet rs = clienteController.getClienteByCnpj(jtfCnpjBuscado.getText());
-            
+            List<ClienteModel> clientes = clienteController.getClienteByCnpj(jtfCnpjBuscado.getText());
             ArrayList<String[]> dadosTabelaConsulta = new ArrayList<>();
             
-            while(rs.next()){
-                dadosTabelaConsulta.add(new String[]{rs.getString("id"), rs.getString("nome"), rs.getString("nomefantasia"), rs.getString("razaosocial"),rs.getString("cnpj")});
-            }
+            clientes.forEach((cliente) -> {
+                dadosTabelaConsulta.add(new String[]{cliente.getId().toString(), cliente.getNome(), cliente.getNomeFantasia(), cliente.getRazaoSocial(),cliente.getCnpj()});
+            });
             
             dadosTabelaConsulta.forEach((linha) -> {
                 gerarTabelaConsulta.addLinha(linha);

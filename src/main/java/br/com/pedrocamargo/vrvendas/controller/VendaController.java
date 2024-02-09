@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,7 +63,7 @@ public class VendaController implements VendaControllerInterface {
     }
     
     @Override
-    public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException {
+    public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException {
         return vendaService.getVendasByIdCliente(idCliente);
     }
     

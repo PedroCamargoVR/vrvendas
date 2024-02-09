@@ -3,27 +3,25 @@ package br.com.pedrocamargo.vrvendas.view;
 import br.com.pedrocamargo.vrvendas.controller.ClienteController;
 import br.com.pedrocamargo.vrvendas.controller.VendaController;
 import br.com.pedrocamargo.vrvendas.enums.StatusVendaEnum;
+import br.com.pedrocamargo.vrvendas.model.ClienteModel;
+import br.com.pedrocamargo.vrvendas.model.VendaModel;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.util.converter.LocalDateTimeStringConverter;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import br.com.pedrocamargo.vrvendas.util.EditarCelulaTabelaUtil;
 import br.com.pedrocamargo.vrvendas.util.ExibirJanelaUtil;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaEmCelulaUtil;
+import java.util.List;
 
 public class ConsultarVendasView extends javax.swing.JInternalFrame {
 
@@ -250,54 +248,57 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                 gerarTabela.getTable().getColumnModel().getColumn(2).setMaxWidth(130);
             
                 try {
-                    ResultSet clientesRs = clienteController.getClientes();
-                    ResultSet vendasRs;
-                    BigDecimal totalVendasDigitando;
-                    BigDecimal totalVendasFinalParc;
-                    BigDecimal totalVendasFinal;
+                    List<ClienteModel> clientes = clienteController.getClientes();                    
+                    
+                    clientes.forEach((cliente) -> {
+                        try{
+                            List<VendaModel> vendas = vendaController.getVendasByIdCliente(cliente.getId());
+                            BigDecimal totalVendasDigitando = new BigDecimal(0);
+                            BigDecimal totalVendasFinalParc = new BigDecimal(0);
+                            BigDecimal totalVendasFinal = new BigDecimal(0);                        
 
-                    while(clientesRs.next()){
-                        vendasRs = vendaController.getVendasByIdCliente(clientesRs.getInt("id"));
-                        totalVendasDigitando = new BigDecimal(0);
-                        totalVendasFinalParc = new BigDecimal(0);
-                        totalVendasFinal = new BigDecimal(0);                        
-                        
-                        DefaultTableModel subTabelaPorCliente = new DefaultTableModel(){
-                                @Override
-                                public boolean isCellEditable(int row, int column) {
-                                    return false;
+                            DefaultTableModel subTabelaPorCliente = new DefaultTableModel(){
+                                    @Override
+                                    public boolean isCellEditable(int row, int column) {
+                                        return false;
+                                    }
+                                };
+                            subTabelaPorCliente.addColumn("ID");
+                            subTabelaPorCliente.addColumn("Valor Total");
+                            subTabelaPorCliente.addColumn("Status");
+                               
+                            for(int i = 0; i < vendas.size(); i++){
+                                VendaModel venda = vendas.get(i);
+                                
+                                switch(venda.getId_status()){
+                                    case 1:
+                                        totalVendasDigitando = totalVendasDigitando.add(venda.getValortotal());
+                                    break;
+                                    case 2:
+                                        totalVendasFinalParc = totalVendasFinalParc.add(venda.getValortotal());
+                                    break;
+                                    case 3:
+                                        totalVendasFinal = totalVendasFinal.add(venda.getValortotal());
+                                    break;
                                 }
-                            };
-                        subTabelaPorCliente.addColumn("ID");
-                        subTabelaPorCliente.addColumn("Valor Total");
-                        subTabelaPorCliente.addColumn("Status");
-                        
-                        while(vendasRs.next()){
-                            switch(vendasRs.getInt("id_status")){
-                                case 1:
-                                    totalVendasDigitando = totalVendasDigitando.add(vendasRs.getBigDecimal("valortotal"));
-                                break;
-                                case 2:
-                                    totalVendasFinalParc = totalVendasFinalParc.add(vendasRs.getBigDecimal("valortotal"));
-                                break;
-                                case 3:
-                                    totalVendasFinal = totalVendasFinal.add(vendasRs.getBigDecimal("valortotal"));
-                                break;
+                                subTabelaPorCliente.addRow(new Object[]{venda.getId(),"R$ " + venda.getValortotal().toString(),StatusVendaEnum.porCodigo(venda.getId_status()).getDescricao()});
                             }
-                            subTabelaPorCliente.addRow(new Object[]{vendasRs.getInt("id"),"R$ " + vendasRs.getBigDecimal("valortotal").toString(),StatusVendaEnum.porCodigo(vendasRs.getInt("id_status")).getDescricao()});
+                            
+                            subTabelaPorCliente.addRow(new Object[]{""});
+                            subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
+                            subTabelaPorCliente.addRow(
+                                    new Object[]{
+                                        "Digitando: R$ " +  totalVendasDigitando.toString(),
+                                        "Final. Parc.: R$ " +  totalVendasFinalParc.toString(),
+                                        "Finalizados: R$ " +  totalVendasFinal.toString(),
+                                    }
+                            );
+                            gerarTabela.addLinha(new Object[]{cliente.getId(), cliente.getNome(), cliente.getCnpj(),subTabelaPorCliente});
+                        }catch(SQLException sqlE){
+                            throw new RuntimeException(sqlE.getMessage());
                         }
-                        subTabelaPorCliente.addRow(new Object[]{""});
-                        subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
-                        subTabelaPorCliente.addRow(
-                                new Object[]{
-                                    "Digitando: R$ " +  totalVendasDigitando.toString(),
-                                    "Final. Parc.: R$ " +  totalVendasFinalParc.toString(),
-                                    "Finalizados: R$ " +  totalVendasFinal.toString(),
-                                }
-                        );
-                        gerarTabela.addLinha(new Object[]{clientesRs.getInt("id"), clientesRs.getString("nome"), clientesRs.getString("cnpj"),subTabelaPorCliente});
-                    }
-                } catch (SQLException ex) {
+                    });
+                } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Erro ao carregar clientes\n"+ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 

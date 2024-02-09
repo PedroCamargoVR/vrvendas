@@ -67,7 +67,7 @@ public class VendaService {
         return null;
     }
     
-    public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException {
+    public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException {
         return vendaDao.getVendasByIdCliente(idCliente);
     }
     

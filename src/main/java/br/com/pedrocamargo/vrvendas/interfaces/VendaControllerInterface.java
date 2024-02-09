@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface VendaControllerInterface {
     
@@ -15,7 +16,7 @@ public interface VendaControllerInterface {
     
     public VendaModel getVendaById(Integer idVenda) throws SQLException;
     
-    public ResultSet getVendasByIdCliente(Integer idCliente) throws SQLException;
+    public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException;
     
     public ArrayList<VendaVO> getAllVendasVo() throws SQLException;
     

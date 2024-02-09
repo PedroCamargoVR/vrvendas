@@ -5,6 +5,7 @@ import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import br.com.pedrocamargo.vrvendas.service.ClienteService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ClienteController implements ClienteControllerInterface{
 
@@ -20,7 +21,7 @@ public class ClienteController implements ClienteControllerInterface{
     }
 
     @Override
-    public ResultSet getClientes() throws SQLException {
+    public List<ClienteModel> getClientes() throws SQLException {
         return clienteService.getClientes();
     }
     
@@ -30,7 +31,7 @@ public class ClienteController implements ClienteControllerInterface{
     }
     
     @Override
-    public ResultSet getClienteByCnpj(String cnpj) throws SQLException {
+    public List<ClienteModel> getClienteByCnpj(String cnpj) throws SQLException {
         return clienteService.getClienteByCnpj(cnpj);
     }
 

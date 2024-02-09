@@ -1,9 +1,11 @@
 package br.com.pedrocamargo.vrvendas.service;
 
+import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.dao.ClienteDao;
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ClienteService {
     
@@ -11,7 +13,7 @@ public class ClienteService {
     private ClienteDao clienteDao;
     
     public ClienteService(){
-        clienteDao = new ClienteDao();
+        clienteDao = new ClienteDao(new ConnectionFactory());
     }
     
     public void salvarCliente(String id, String nome, String nomefantasia, String razaosocial, String cnpj) throws SQLException{
@@ -24,21 +26,16 @@ public class ClienteService {
         clienteDao.salvarCliente(clienteModel);
     }
 
-    public ResultSet getClientes() throws SQLException {
+    public List<ClienteModel> getClientes() throws SQLException {
         return clienteDao.getClientes();
     }
     
     public ClienteModel getClienteById(Integer id) throws SQLException{
-        ResultSet rs = clienteDao.getClienteById(id);
-        if(rs.next()){
-            return new ClienteModel(rs.getInt("id"),rs.getString("nome"),rs.getString("nomefantasia"),rs.getString("razaosocial"),rs.getString("cnpj"));
-        }
-        return null;
+        return clienteDao.getClienteById(id);
     }
     
-    public ResultSet getClienteByCnpj(String cnpj) throws SQLException {
-        ResultSet rs = clienteDao.getClienteByCnpj(cnpj);
-        return rs;
+    public List<ClienteModel> getClienteByCnpj(String cnpj) throws SQLException {
+        return clienteDao.getClienteByCnpj(cnpj);
     }
 
     public void removerCLiente(Integer id) throws SQLException {

@@ -34,5 +34,19 @@ public class ClienteModel {
     public String getCnpj() {
         return cnpj;
     }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setNomeFantasia(String nomeFantasia) {
+        this.nomeFantasia = nomeFantasia;
+    }
+
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
+    
+    
     
 }

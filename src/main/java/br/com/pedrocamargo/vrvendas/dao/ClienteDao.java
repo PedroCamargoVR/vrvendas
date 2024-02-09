@@ -6,14 +6,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDao {
     
     private ConnectionFactory connF;
     private StringBuilder sql;
     
-    public ClienteDao(){
-        this.connF = new ConnectionFactory();
+    public ClienteDao(ConnectionFactory connFactory){
+        this.connF = connFactory;
         this.sql = new StringBuilder();
     }
     
@@ -56,8 +58,9 @@ public class ClienteDao {
         
     }
     
-    public ResultSet getClientes() throws SQLException{
-                
+    public List<ClienteModel> getClientes() throws SQLException{
+        List<ClienteModel> clientes = new ArrayList<>();   
+        
         sql.setLength(0);
         sql.append("SELECT * FROM clientes ORDER BY id");
         
@@ -65,26 +68,38 @@ public class ClienteDao {
         try (Connection conn = connF.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql.toString());
             rs = ps.executeQuery();
+            
+            while(rs.next()){
+                clientes.add(new ClienteModel(rs.getInt("id"),rs.getString("nome"),rs.getString("nomefantasia"),rs.getString("razaosocial"),rs.getString("cnpj")));
+            }
+            rs.close();
         }
         
-        return rs;
+        return clientes;
     }
     
-    public ResultSet getClienteById(Integer id) throws SQLException{
+    public ClienteModel getClienteById(Integer id) throws SQLException{
+        ClienteModel cliente = null;
         sql.setLength(0);
         sql.append("SELECT * FROM clientes WHERE id = ?");
         
         ResultSet rs;
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString());) {
             ps.setInt(1, id);
             rs = ps.executeQuery();
+            
+            while(rs.next()){
+                cliente = new ClienteModel(rs.getInt("id"),rs.getString("nome"),rs.getString("nomefantasia"),rs.getString("razaosocial"),rs.getString("cnpj"));
+            }
+            rs.close();
         }
-        return rs;
         
+        return cliente;
     }
     
-    public ResultSet getClienteByCnpj(String cnpj) throws SQLException{
+    public List<ClienteModel> getClienteByCnpj(String cnpj) throws SQLException{
+        List<ClienteModel> clientes = new ArrayList<>();
+        
         sql.setLength(0);
         sql.append("SELECT * FROM clientes WHERE cnpj LIKE ?");
         
@@ -93,8 +108,13 @@ public class ClienteDao {
             PreparedStatement ps = conn.prepareStatement(sql.toString());
             ps.setString(1, "%" + cnpj + "%");
             rs = ps.executeQuery();
+            
+            while(rs.next()){
+                clientes.add(new ClienteModel(rs.getInt("id"),rs.getString("nome"),rs.getString("nomefantasia"),rs.getString("razaosocial"),rs.getString("cnpj")));
+            }
+            rs.close();
         }
-        return rs;
+        return clientes;
     }
     
     public void removeCliente(Integer id) throws SQLException{

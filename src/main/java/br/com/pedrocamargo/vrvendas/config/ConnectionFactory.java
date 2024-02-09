@@ -27,7 +27,11 @@ public class ConnectionFactory {
     }
     
     public void executaMigrations(){
-        Flyway flyway = Flyway.configure().dataSource("jdbc:postgresql://"+host+":"+porta+"/"+nomeBd, usuario, senha).load();
+        Flyway flyway = Flyway
+                .configure()
+                .dataSource("jdbc:postgresql://"+host+":"+porta+"/"+nomeBd, usuario, senha)
+                .locations("classpath:db/migration/prod")
+                .load();
         flyway.migrate();
     }
 }
