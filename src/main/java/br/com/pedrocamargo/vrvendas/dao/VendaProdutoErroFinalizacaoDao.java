@@ -18,6 +18,11 @@ public class VendaProdutoErroFinalizacaoDao {
         this.sql = new StringBuilder();
     }
     
+    public VendaProdutoErroFinalizacaoDao(ConnectionFactory conn){
+        this.connF = conn;
+        this.sql = new StringBuilder();
+    }
+    
     public List<ProdutoVendaErroFinalizacaoModel> getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException{
         List<ProdutoVendaErroFinalizacaoModel> produtoVendaErroFinalizacaoModelList = new ArrayList<>();
         

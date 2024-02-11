@@ -141,7 +141,7 @@ public class VendaProdutoDao {
         List<VendaProdutoModel> vendaProduto = new ArrayList<>();
         
         sql.setLength(0);
-        sql.append("SELECT * FROM vendaproduto WHERE id_venda = ?");
+        sql.append("SELECT * FROM vendaproduto WHERE id_venda = ? ORDER BY id");
         
         try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1, idVenda);

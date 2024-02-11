@@ -15,6 +15,10 @@ public class ProdutoService {
         this.produtoDao = new ProdutoDao();
     }
     
+    public ProdutoService(ConnectionFactory conn){
+        this.produtoDao = new ProdutoDao(conn);
+    }
+    
     public ProdutoService(ConnectionFactory conn,OkHttpClient fakeApi){
         this.produtoDao = new ProdutoDao(conn,fakeApi);
     }

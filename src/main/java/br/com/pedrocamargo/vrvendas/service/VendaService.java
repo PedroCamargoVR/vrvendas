@@ -1,5 +1,6 @@
 package br.com.pedrocamargo.vrvendas.service;
 
+import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
 import br.com.pedrocamargo.vrvendas.dao.VendaDao;
 import br.com.pedrocamargo.vrvendas.dao.VendaProdutoDao;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import okhttp3.OkHttpClient;
 
 
 public class VendaService {
@@ -33,6 +35,14 @@ public class VendaService {
         this.fakeProdutoApiService = new FakeProdutoAPIService();
         this.vendaProdutoDao = new VendaProdutoDao();
         this.vendaProdutoErroFinalizacaoDao = new VendaProdutoErroFinalizacaoDao();
+    }
+    
+    public VendaService(ConnectionFactory conn,OkHttpClient okHttpCliente){
+        this.vendaDao = new VendaDao(conn);
+        this.produtoDao = new ProdutoDao(conn);
+        this.vendaProdutoDao = new VendaProdutoDao(conn);
+        this.vendaProdutoErroFinalizacaoDao = new VendaProdutoErroFinalizacaoDao(conn);
+        this.fakeProdutoApiService = new FakeProdutoAPIService(okHttpCliente);
     }
 
     public Integer salvarVenda(VendaModel venda) throws SQLException {

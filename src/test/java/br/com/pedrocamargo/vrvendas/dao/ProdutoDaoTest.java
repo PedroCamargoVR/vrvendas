@@ -26,8 +26,8 @@ import org.mockito.MockitoAnnotations;
 
 public class ProdutoDaoTest extends BaseTest {
     private ProdutoDao produtoDao;
-    private String dataUltimaAtualizacao;
     
+    private String dataUltimaAtualizacao;
     @Mock
     public OkHttpClient client;
     @Mock
