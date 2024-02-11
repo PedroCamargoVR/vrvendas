@@ -43,10 +43,8 @@ public class VendaDao {
             sql.append("(id_cliente, id_status, valortotal, created_at, updated_at) ");
             sql.append("VALUES(?, ?, ?, ?, ?)");
 
-            try (Connection conn = connF.getConnection()) {
+            try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
                 conn.setAutoCommit(false);
-
-                PreparedStatement ps = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
 
                 ps.setInt(1,venda.getId_cliente());
                 ps.setInt(2,venda.getId_status());
@@ -87,10 +85,8 @@ public class VendaDao {
             sql.append("SET id_cliente = ?, id_status = ?, valortotal = ?, updated_at = ? ");
             sql.append("WHERE id = ?");
             
-            try (Connection conn = connF.getConnection()) {
+            try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
                 conn.setAutoCommit(false);
-                
-                PreparedStatement ps = conn.prepareStatement(sql.toString());
 
                 ps.setInt(1,venda.getId_cliente());
                 ps.setInt(2,venda.getId_status());
@@ -131,8 +127,7 @@ public class VendaDao {
         sql.setLength(0);
         sql.append("SELECT * FROM venda WHERE id = ?");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1, id);
             
             ResultSet rs = ps.executeQuery();
@@ -171,8 +166,7 @@ public class VendaDao {
         sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
         sql.append("ORDER BY v.id");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
@@ -300,9 +294,7 @@ public class VendaDao {
         sql.append("SET id_status = ? ");
         sql.append("WHERE id = ? ");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1,idStatus);
             ps.setInt(2,idVenda);
             

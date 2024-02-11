@@ -732,10 +732,12 @@ public class NovaVendaView extends javax.swing.JInternalFrame {
                       case 200:
                           JOptionPane.showMessageDialog(null, "A venda foi finalizada com sucesso!", "Sucesso!", JOptionPane.INFORMATION_MESSAGE);
                           iniciarNovaTela(vendaController.getVendaAtual().getId());
+                          this.dispose();
                       break;
                       case 207:
                           JOptionPane.showMessageDialog(null, "A venda foi finalizada parcialmente!\nVerifique as pendências no botão \"Verificar Pendências\" na tela da venda!", "Finalizada Parcialmente!", JOptionPane.WARNING_MESSAGE);
                           iniciarNovaTela(vendaController.getVendaAtual().getId());
+                          this.dispose();
                       break;
                       case 400:
                           JOptionPane.showMessageDialog(null, "Ocorreu um erro ao finalizar a venda\nErro: 400 - Todos os produtos com estoque insuficiente", "Finalizada Parcialmente!", JOptionPane.ERROR_MESSAGE);

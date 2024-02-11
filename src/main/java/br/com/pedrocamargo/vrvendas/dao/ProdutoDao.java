@@ -23,6 +23,12 @@ public class ProdutoDao {
         this.sql = new StringBuilder();
     }
     
+    public ProdutoDao(ConnectionFactory conn){
+        this.fakeProdutoApiService = new FakeProdutoAPIService();
+        this.connF = conn;
+        this.sql = new StringBuilder();
+    }
+    
     public ProdutoDao(ConnectionFactory conn, OkHttpClient fakeApi){
         this.fakeProdutoApiService = new FakeProdutoAPIService(fakeApi);
         this.connF = conn;
@@ -99,8 +105,7 @@ public class ProdutoDao {
         sql.append("SELECT * FROM produtos ");
         sql.append("ORDER BY id");
         
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             ResultSet rs = ps.executeQuery();
             
             while(rs.next()){
@@ -116,8 +121,7 @@ public class ProdutoDao {
         sql.setLength(0);
         sql.append("SELECT * FROM produtos WHERE id = ?");
         
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             
@@ -140,9 +144,7 @@ public class ProdutoDao {
         sql.append("AND vp.id_venda = ? ");
         sql.append("ORDER BY vp.id");
         
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             ps.setInt(1, idVenda);
             ps.setInt(2, idVenda);
             
@@ -166,8 +168,7 @@ public class ProdutoDao {
         sql.append("SELECT * FROM produtos WHERE descricao ILIKE ? ");
         sql.append("ORDER BY id");
         
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             ps.setString(1, "%" + descricao + "%");
             ResultSet rs = ps.executeQuery();
             
@@ -183,8 +184,7 @@ public class ProdutoDao {
         sql.append("SELECT estoque FROM produtos WHERE id = ? ");
         
         ResultSet rs;
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             ps.setInt(1, id);
             rs = ps.executeQuery();
             if(rs.next()){

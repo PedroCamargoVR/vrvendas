@@ -30,9 +30,7 @@ public class VendaProdutoErroFinalizacaoDao {
         sql.append("SELECT id FROM vendaproduto WHERE id_venda = ?");
         sql.append(")");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1,idVenda);
             
             ResultSet rs = ps.executeQuery();
@@ -98,9 +96,7 @@ public class VendaProdutoErroFinalizacaoDao {
         sql.append("DELETE FROM public.vendaprodutoerrofinalizacao ");
         sql.append("WHERE id_vendaproduto = ? ");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1,idVendaProduto);
             
             ps.execute();

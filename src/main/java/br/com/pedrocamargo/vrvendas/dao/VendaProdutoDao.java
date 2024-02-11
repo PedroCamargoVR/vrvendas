@@ -143,8 +143,7 @@ public class VendaProdutoDao {
         sql.setLength(0);
         sql.append("SELECT * FROM vendaproduto WHERE id_venda = ?");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())){
             ps.setInt(1, idVenda);
             
             ResultSet rs = ps.executeQuery();

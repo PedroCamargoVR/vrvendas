@@ -27,8 +27,7 @@ public class ClienteDao {
             sql.append("(nome, nomefantasia, razaosocial, cnpj)");
             sql.append(" VALUES(?, ?, ?, ?);");
             
-            try (Connection conn = connF.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement(sql.toString());
+            try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
                 
                 ps.setString(1, model.getNome());
                 ps.setString(2, model.getNomeFantasia());
@@ -43,8 +42,7 @@ public class ClienteDao {
             sql.append("SET nome = ?, nomefantasia = ?, razaosocial = ?, cnpj = ? ");
             sql.append("WHERE id = ?;");
             
-            try (Connection conn = connF.getConnection()) {
-                PreparedStatement ps = conn.prepareStatement(sql.toString());
+            try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
                 
                 ps.setString(1, model.getNome());
                 ps.setString(2, model.getNomeFantasia());
@@ -65,8 +63,7 @@ public class ClienteDao {
         sql.append("SELECT * FROM clientes ORDER BY id");
         
         ResultSet rs;
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             rs = ps.executeQuery();
             
             while(rs.next()){
@@ -104,8 +101,7 @@ public class ClienteDao {
         sql.append("SELECT * FROM clientes WHERE cnpj LIKE ?");
         
         ResultSet rs;
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {            
             ps.setString(1, "%" + cnpj + "%");
             rs = ps.executeQuery();
             
@@ -122,8 +118,7 @@ public class ClienteDao {
         sql.setLength(0);
         sql.append("DELETE FROM clientes WHERE id = ?");
         
-        try (Connection conn = connF.getConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
+        try (Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             
             ps.setInt(1, id);
             ps.execute();
