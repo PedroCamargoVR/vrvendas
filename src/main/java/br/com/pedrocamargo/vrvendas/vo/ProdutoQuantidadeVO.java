@@ -1,7 +1,6 @@
 package br.com.pedrocamargo.vrvendas.vo;
 
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
-import java.math.BigDecimal;
 
 
 public class ProdutoQuantidadeVO {

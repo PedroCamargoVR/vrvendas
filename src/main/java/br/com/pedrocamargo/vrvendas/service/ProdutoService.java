@@ -1,9 +1,11 @@
 package br.com.pedrocamargo.vrvendas.service;
 
+import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.dao.ProdutoDao;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import java.sql.SQLException;
 import java.util.List;
+import okhttp3.OkHttpClient;
 
 public class ProdutoService {
 
@@ -11,6 +13,10 @@ public class ProdutoService {
     
     public ProdutoService(){
         this.produtoDao = new ProdutoDao();
+    }
+    
+    public ProdutoService(ConnectionFactory conn,OkHttpClient fakeApi){
+        this.produtoDao = new ProdutoDao(conn,fakeApi);
     }
     
     public void salvarProdutoLote(ProdutoModel[] produtos) throws SQLException {

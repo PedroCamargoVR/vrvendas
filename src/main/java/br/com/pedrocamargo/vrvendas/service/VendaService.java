@@ -153,7 +153,6 @@ public class VendaService {
         }else if(responseApi.containsKey(500)){
             return 500;
         }
-        
         return 0;
     }
 

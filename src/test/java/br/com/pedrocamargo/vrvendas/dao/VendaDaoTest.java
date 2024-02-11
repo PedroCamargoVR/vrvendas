@@ -2,14 +2,12 @@ package br.com.pedrocamargo.vrvendas.dao;
 
 import br.com.pedrocamargo.vrvendas.config.BaseTest;
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
-import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

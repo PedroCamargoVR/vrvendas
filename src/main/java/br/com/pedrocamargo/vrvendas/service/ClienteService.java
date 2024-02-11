@@ -15,6 +15,10 @@ public class ClienteService {
         clienteDao = new ClienteDao(new ConnectionFactory());
     }
     
+    public ClienteService(ConnectionFactory conn){
+        clienteDao = new ClienteDao(conn);
+    }
+    
     public void salvarCliente(String id, String nome, String nomefantasia, String razaosocial, String cnpj) throws SQLException{
         if(id.isEmpty()){
             clienteModel = new ClienteModel(0, nome, nomefantasia, razaosocial, cnpj);
