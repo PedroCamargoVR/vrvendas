@@ -1,6 +1,7 @@
 package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.ProdutoController;
+import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.math.RoundingMode;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import java.util.List;
 
 public class ConsultaProdutosView extends javax.swing.JInternalFrame {
 
@@ -29,13 +31,13 @@ public class ConsultaProdutosView extends javax.swing.JInternalFrame {
         gerarTabelaConsulta.limparTabela();
         
         try {
-            ResultSet rs = produtoController.getProdutoByDescricao(jtfDescricaoBuscada.getText());
+            List<ProdutoModel> produtos = produtoController.getProdutoByDescricao(jtfDescricaoBuscada.getText());
             
             ArrayList<String[]> dadosTabelaConsulta = new ArrayList<>();
             
-            while(rs.next()){
-                dadosTabelaConsulta.add(new String[]{rs.getString("id"), rs.getString("descricao"), rs.getString("estoque"), rs.getString("unidade"),rs.getBigDecimal("preco").setScale(2, RoundingMode.HALF_UP).toString()});
-            }
+            produtos.forEach((produto) -> {
+                dadosTabelaConsulta.add(new String[]{produto.getId().toString(), produto.getDescricao(), produto.getEstoque().toString(), produto.getUnidade(),produto.getPreco().toString()});
+            });
             
             dadosTabelaConsulta.forEach((linha) -> {
                 gerarTabelaConsulta.addLinha(linha);

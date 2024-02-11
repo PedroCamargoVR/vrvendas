@@ -10,6 +10,7 @@ import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.ErroFinali
 import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import br.com.pedrocamargo.vrvendas.vo.ProdutoQuantidadeVO;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -47,18 +48,11 @@ public class VendaService {
         if(rs.next()){
             VendaModel vendaModel = new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),new BigDecimal(0),rs.getTimestamp("created_at"),rs.getTimestamp("updated_at"));
             
-            ResultSet rsProdutos = produtoDao.getProdutosByVendaId(vendaModel.getId());
+            List<ProdutoQuantidadeVO> produtos = produtoDao.getProdutosByVendaId(vendaModel.getId());
             
-            while(rsProdutos.next()){
-                vendaModel.adicionarProduto(new ProdutoModel(
-                    rsProdutos.getInt("id"),
-                    rsProdutos.getString("descricao"),
-                    rsProdutos.getInt("estoque"),
-                    rsProdutos.getBigDecimal("valorprodutonavenda"),
-                    rsProdutos.getString("unidade"),
-                    rsProdutos.getString("ultimaatualizacao")
-                ), rsProdutos.getInt("quantidade"));
-            }
+            produtos.forEach((produtoVo) -> {
+                vendaModel.adicionarProduto(produtoVo.getProduto(),produtoVo.getQuantidade());
+            });
             
             return vendaModel;
         }

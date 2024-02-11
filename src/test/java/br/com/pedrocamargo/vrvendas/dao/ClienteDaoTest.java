@@ -55,7 +55,7 @@ public class ClienteDaoTest extends BaseTest {
     }
     
     @Test
-    public void emUmBancoComTresClientesAoPuxarClientesDeveRetornarUmaListaComTres() throws Exception{
+    public void dadoUmBancoComTresClientesAoPuxarClientesDeveRetornarUmaListaComTres() throws Exception{
         ClienteDao clienteDao = new ClienteDao(mockConnectionFactory);
         
         ClienteModel clienteModel1 = new ClienteModel(0, "Nome de Teste 1", "Nome fantasia de teste 1", "Razao Social de Teste 1", "01889095000109");

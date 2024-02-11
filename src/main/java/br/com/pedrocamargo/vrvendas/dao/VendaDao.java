@@ -27,6 +27,12 @@ public class VendaDao {
         this.vendaProdutoDao = new VendaProdutoDao();
     }
     
+    public VendaDao(ConnectionFactory conn){
+        this.connF = conn;
+        this.sql = new StringBuilder();
+        this.vendaProdutoDao = new VendaProdutoDao();
+    }
+    
     public Integer salvarVenda(VendaModel venda) throws SQLException{
         if(venda.getId() <= 0){
             sql.setLength(0);

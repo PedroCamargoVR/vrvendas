@@ -1,8 +1,8 @@
 package br.com.pedrocamargo.vrvendas.interfaces;
 
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface ProdutoControllerInterface {
     public void salvarProdutoLote(ProdutoModel[] produtos) throws SQLException;
@@ -11,5 +11,5 @@ public interface ProdutoControllerInterface {
     
     public ProdutoModel getProdutoById(Integer id) throws SQLException;
     
-    public ResultSet getProdutoByDescricao(String descricao) throws SQLException;
+    public List<ProdutoModel> getProdutoByDescricao(String descricao) throws SQLException;
 }

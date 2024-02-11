@@ -27,6 +27,12 @@ public class FakeProdutoAPIService {
         this.urlApi = "http://192.168.1.104:3000";
     }
     
+    public FakeProdutoAPIService(OkHttpClient okHttpFake){
+        this.client = okHttpFake;
+        this.JSON = MediaType.get("application/json; charset=utf-8");
+        this.urlApi = "http://192.168.1.104:3000";
+    }
+    
     public ErroFinalizacaoResponseModel obterObjetoErro(String json){
         
         Gson gson = new Gson();
@@ -51,7 +57,7 @@ public class FakeProdutoAPIService {
                 produtos = gson.fromJson(jsonResponse, ProdutoModel[].class);
                 
             } else {
-                JOptionPane.showMessageDialog(null, "Erro ao capturar produtos da API\n"+response, "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Erro ao capturar produtos da API\nErro: "+response.code()+"\nMessage: "+response.body(), "Erro", JOptionPane.ERROR_MESSAGE);
                 System.out.println("Falha na requisição: " + response);
             }
         } catch (IOException e) {

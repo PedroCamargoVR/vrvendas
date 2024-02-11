@@ -23,6 +23,10 @@ CREATE TABLE public.status (
 	CONSTRAINT status_pk PRIMARY KEY (id)
 );
 
+INSERT INTO public.status (id, descricao) VALUES(1, 'DIGITANDO');
+INSERT INTO public.status (id, descricao) VALUES(2, 'FINALIZADO PARCIAL');
+INSERT INTO public.status (id, descricao) VALUES(3, 'FINALIZADO');
+
 CREATE TABLE public.venda (
 	id serial4 NOT NULL,
 	id_cliente int4 NOT NULL,

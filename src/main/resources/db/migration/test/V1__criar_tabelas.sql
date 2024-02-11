@@ -20,6 +20,10 @@ CREATE TABLE status (
 	descricao varchar NOT NULL
 );
 
+INSERT INTO public.status (id, descricao) VALUES(1, 'DIGITANDO');
+INSERT INTO public.status (id, descricao) VALUES(2, 'FINALIZADO PARCIAL');
+INSERT INTO public.status (id, descricao) VALUES(3, 'FINALIZADO');
+
 CREATE TABLE venda (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	id_cliente int NOT NULL,

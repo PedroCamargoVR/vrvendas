@@ -3,11 +3,14 @@ package br.com.pedrocamargo.vrvendas.dao;
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.FakeProdutoAPIService;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
+import br.com.pedrocamargo.vrvendas.vo.ProdutoQuantidadeVO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import okhttp3.OkHttpClient;
 
 public class ProdutoDao {
     private ConnectionFactory connF;
@@ -17,6 +20,12 @@ public class ProdutoDao {
     public ProdutoDao(){
         this.fakeProdutoApiService = new FakeProdutoAPIService();
         this.connF = new ConnectionFactory();
+        this.sql = new StringBuilder();
+    }
+    
+    public ProdutoDao(ConnectionFactory conn, OkHttpClient fakeApi){
+        this.fakeProdutoApiService = new FakeProdutoAPIService(fakeApi);
+        this.connF = conn;
         this.sql = new StringBuilder();
     }
     
@@ -49,7 +58,7 @@ public class ProdutoDao {
                         psUpdate.setDouble(2, produto.getEstoque());
                         psUpdate.setBigDecimal(3, produto.getPreco());
                         psUpdate.setString(4, produto.getUnidade());
-                        psUpdate.setTimestamp(5, produto.getUltimaAtualizacaoTimeStamp());
+                        psUpdate.setString(5, produto.getUltimaAtualizacao());
                         psUpdate.setInt(6,produto.getId());
                         
                         psUpdate.execute();
@@ -67,7 +76,7 @@ public class ProdutoDao {
                         psInsert.setDouble(2, produto.getEstoque());
                         psInsert.setBigDecimal(3, produto.getPreco());
                         psInsert.setString(4, produto.getUnidade());
-                        psInsert.setTimestamp(5, produto.getUltimaAtualizacaoTimeStamp());
+                        psInsert.setString(5, produto.getUltimaAtualizacao());
                         
                         psInsert.execute();
                     }
@@ -83,8 +92,27 @@ public class ProdutoDao {
         }
     }
     
+    public List<ProdutoModel> getProdutos() throws SQLException{
+        List<ProdutoModel> produtos = new ArrayList<>();
+        
+        sql.setLength(0);
+        sql.append("SELECT * FROM produtos ");
+        sql.append("ORDER BY id");
+        
+        try (Connection conn = connF.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            ResultSet rs = ps.executeQuery();
+            
+            while(rs.next()){
+                produtos.add(new ProdutoModel(rs.getInt("id"),rs.getString("descricao"),rs.getInt("estoque"),rs.getBigDecimal("preco"),rs.getString("unidade"),rs.getString("ultimaatualizacao")));
+            }
+        }
+        return produtos;
+    }
     
-    public ResultSet getProdutoById(Integer id) throws SQLException{
+    public ProdutoModel getProdutoById(Integer id) throws SQLException{
+        ProdutoModel produto = null;
+        
         sql.setLength(0);
         sql.append("SELECT * FROM produtos WHERE id = ?");
         
@@ -93,13 +121,19 @@ public class ProdutoDao {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             
-            return rs;
+            if(rs.next()){
+                produto = new ProdutoModel(rs.getInt("id"),rs.getString("descricao"),rs.getInt("estoque"),rs.getBigDecimal("preco"),rs.getString("unidade"),rs.getString("ultimaatualizacao"));
+            }
         }
+        
+        return produto;
     }
     
-    public ResultSet getProdutosByVendaId(Integer idVenda) throws SQLException{
+    public List<ProdutoQuantidadeVO> getProdutosByVendaId(Integer idVenda) throws SQLException{
+        List<ProdutoQuantidadeVO> produtos = new ArrayList<>();
+        
         sql.setLength(0);
-        sql.append("SELECT p.id,p.descricao,p.estoque,p.preco,p.unidade,p.ultimaatualizacao,vp.quantidade,vp.valorprodutonavenda ");
+        sql.append("SELECT p.id,p.descricao,p.estoque,p.unidade,p.ultimaatualizacao,vp.quantidade,vp.valorprodutonavenda ");
         sql.append("FROM produtos p ");
         sql.append("INNER JOIN vendaproduto vp ON vp.id_produto = p.id ");
         sql.append("WHERE p.id in (select id_produto from vendaproduto where id_venda = ?) ");
@@ -113,11 +147,21 @@ public class ProdutoDao {
             ps.setInt(2, idVenda);
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            
+            while(rs.next()){
+                produtos.add(new ProdutoQuantidadeVO(
+                    new ProdutoModel(rs.getInt("id"),rs.getString("descricao"),rs.getInt("estoque"),rs.getBigDecimal("valorprodutonavenda"),rs.getString("unidade"),rs.getString("ultimaatualizacao")),
+                    rs.getInt("quantidade")
+                ));
+            }
         }
+        
+        return produtos;
     }
     
-    public ResultSet getProdutoByDescricao(String descricao) throws SQLException{
+    public List<ProdutoModel> getProdutoByDescricao(String descricao) throws SQLException{
+        List<ProdutoModel> produtos = new ArrayList<>();
+        
         sql.setLength(0);
         sql.append("SELECT * FROM produtos WHERE descricao ILIKE ? ");
         sql.append("ORDER BY id");
@@ -127,8 +171,11 @@ public class ProdutoDao {
             ps.setString(1, "%" + descricao + "%");
             ResultSet rs = ps.executeQuery();
             
-            return rs;
+            while(rs.next()){
+                produtos.add(new ProdutoModel(rs.getInt("id"),rs.getString("descricao"),rs.getInt("estoque"),rs.getBigDecimal("preco"),rs.getString("unidade"),rs.getString("ultimaatualizacao")));
+            }
         }
+        return produtos;
     }
 
     public Integer getEstoqueProduto(Integer id) throws SQLException {
@@ -140,9 +187,9 @@ public class ProdutoDao {
             PreparedStatement ps = conn.prepareStatement(sql.toString());
             ps.setInt(1, id);
             rs = ps.executeQuery();
-        }
-        if(rs.next()){
-            return rs.getInt("estoque");
+            if(rs.next()){
+                return rs.getInt("estoque");
+            }
         }
         return -1;
     }
