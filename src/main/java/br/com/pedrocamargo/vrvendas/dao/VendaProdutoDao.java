@@ -2,6 +2,7 @@ package br.com.pedrocamargo.vrvendas.dao;
 
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
+import br.com.pedrocamargo.vrvendas.model.VendaProdutoModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -20,6 +22,11 @@ public class VendaProdutoDao {
     
     public VendaProdutoDao(){
         this.connF = new ConnectionFactory();
+        this.sql = new StringBuilder();
+    }
+    
+    public VendaProdutoDao(ConnectionFactory conn){
+        this.connF = conn;
         this.sql = new StringBuilder();
     }
     
@@ -130,7 +137,9 @@ public class VendaProdutoDao {
         }
     }
     
-    public ResultSet getVendaProdutoByIdVenda(Integer idVenda) throws SQLException{
+    public List<VendaProdutoModel> getVendaProdutoByIdVenda(Integer idVenda) throws SQLException{
+        List<VendaProdutoModel> vendaProduto = new ArrayList<>();
+        
         sql.setLength(0);
         sql.append("SELECT * FROM vendaproduto WHERE id_venda = ?");
         
@@ -139,17 +148,30 @@ public class VendaProdutoDao {
             ps.setInt(1, idVenda);
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            while(rs.next()){
+                vendaProduto.add(
+                        new VendaProdutoModel(
+                                rs.getInt("id"),
+                                rs.getInt("id_venda"),
+                                rs.getInt("id_produto"),
+                                rs.getBigDecimal("valorprodutonavenda"),
+                                rs.getTimestamp("created_at"),
+                                rs.getTimestamp("updated_at"),
+                                rs.getInt("quantidade")
+                        )
+                );
+            }
         }
+        return vendaProduto;
     }
     
     public ArrayList<Integer> getIdsVendaProdutoByIdVenda(Integer idVenda) throws SQLException{
-        ResultSet rsProdutosVenda = getVendaProdutoByIdVenda(idVenda);
-        ArrayList<Integer> idsProdutosVendaBanco = new ArrayList<Integer>();
+        List<VendaProdutoModel> produtosVenda = getVendaProdutoByIdVenda(idVenda);
+        ArrayList<Integer> idsProdutosVendaBanco = new ArrayList<>();
         
-        while(rsProdutosVenda.next()){
-            idsProdutosVendaBanco.add(rsProdutosVenda.getInt("id_produto"));
-        }
+        produtosVenda.forEach((vendaProduto) -> {
+            idsProdutosVendaBanco.add(vendaProduto.getId_produto());
+        });
         
         return idsProdutosVendaBanco;
     }

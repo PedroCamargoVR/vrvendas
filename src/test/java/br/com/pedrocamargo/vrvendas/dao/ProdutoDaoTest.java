@@ -8,9 +8,6 @@ import br.com.pedrocamargo.vrvendas.vo.ProdutoQuantidadeVO;
 import com.google.gson.Gson;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -29,6 +26,7 @@ import org.mockito.MockitoAnnotations;
 
 public class ProdutoDaoTest extends BaseTest {
     private ProdutoDao produtoDao;
+    private String dataUltimaAtualizacao;
     
     @Mock
     public OkHttpClient client;
@@ -46,13 +44,14 @@ public class ProdutoDaoTest extends BaseTest {
         when(call.execute()).thenReturn(response);
         when(response.body()).thenReturn(responseBody);
         produtoDao = new ProdutoDao(mockConnectionFactory,client);
+        dataUltimaAtualizacao = "0001-01-01T00:00:00Z";
     }
     
     @Test
     public void aoEnviarVetorDeProdutosComProdutosQueNaoExistemNoBancoDeveCadastralos ()throws Exception {        
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
-            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString())
+            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
+            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",dataUltimaAtualizacao)
         };
         assertFalse(produtoDao.getProdutos().size() > 0,"Quantidade de produtos no banco deve ser 0");
         produtoDao.salvarProdutoLote(produtos);
@@ -70,7 +69,7 @@ public class ProdutoDaoTest extends BaseTest {
     @Test
     public void aoEnviarVetorDeProdutosContendoProdutosQueJaExistemNoBancoDeveAtualizalos () throws Exception{        
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
+            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
         };
         produtoDao.salvarProdutoLote(produtos);
         
@@ -82,7 +81,7 @@ public class ProdutoDaoTest extends BaseTest {
         assertEquals("UN",produto1.getUnidade());
         
         ProdutoModel[] produtos2 = {
-            new ProdutoModel(1,"Coca cola 1 litro",35,BigDecimal.valueOf(7.99),"KG",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
+            new ProdutoModel(1,"Coca cola 1 litro",35,BigDecimal.valueOf(7.99),"KG",dataUltimaAtualizacao),
         };
         produtoDao.salvarProdutoLote(produtos2);
         
@@ -97,8 +96,8 @@ public class ProdutoDaoTest extends BaseTest {
     @Test
     public void aoConsultarApiProdutosDeveAtualizarBaseDadosConformeDadosObtidosDosprodutos () throws Exception{
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
-            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString())
+            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
+            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",dataUltimaAtualizacao)
         };
         Gson gson = new Gson();
         when(responseBody.string()).thenReturn(gson.toJson(produtos));
@@ -128,8 +127,8 @@ public class ProdutoDaoTest extends BaseTest {
         VendaDao vendaDao = new VendaDao(mockConnectionFactory);
         //Cadastro 2 Produtos
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
-            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString())
+            new ProdutoModel(1,"Coca Cola 2 litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
+            new ProdutoModel(2,"Pao de Batata",12,BigDecimal.valueOf(9.99),"UN",dataUltimaAtualizacao)
         };
         produtoDao.salvarProdutoLote(produtos);
         
@@ -164,8 +163,8 @@ public class ProdutoDaoTest extends BaseTest {
     public void deveRetornarListaDeProdutosConformeDescricaoDoProdutoInformado () throws Exception{
         //Cadastro 2 Produtos
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 Litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
-            new ProdutoModel(2,"Coca Cola 350ML",12,BigDecimal.valueOf(9.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString())
+            new ProdutoModel(1,"Coca Cola 2 Litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
+            new ProdutoModel(2,"Coca Cola 350ML",12,BigDecimal.valueOf(9.99),"UN",dataUltimaAtualizacao)
         };
         produtoDao.salvarProdutoLote(produtos);
         
@@ -180,8 +179,8 @@ public class ProdutoDaoTest extends BaseTest {
     public void deveRetornarOEstoqueDoProdutoCorrespondenteAoIdInformado () throws Exception{
         //Cadastro 2 Produtos
         ProdutoModel[] produtos = {
-            new ProdutoModel(1,"Coca Cola 2 Litros",40,BigDecimal.valueOf(10.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString()),
-            new ProdutoModel(2,"Coca Cola 350ML",12,BigDecimal.valueOf(9.99),"UN",Timestamp.valueOf(LocalDateTime.of(2020, Month.MARCH, 14, 17, 30)).toString())
+            new ProdutoModel(1,"Coca Cola 2 Litros",40,BigDecimal.valueOf(10.99),"UN",dataUltimaAtualizacao),
+            new ProdutoModel(2,"Coca Cola 350ML",12,BigDecimal.valueOf(9.99),"UN",dataUltimaAtualizacao)
         };
         produtoDao.salvarProdutoLote(produtos);
         

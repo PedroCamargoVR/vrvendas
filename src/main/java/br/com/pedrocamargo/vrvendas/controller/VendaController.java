@@ -1,17 +1,16 @@
 package br.com.pedrocamargo.vrvendas.controller;
 
 import br.com.pedrocamargo.vrvendas.interfaces.VendaControllerInterface;
+import br.com.pedrocamargo.vrvendas.model.ProdutoVendaErroFinalizacaoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import br.com.pedrocamargo.vrvendas.model.VendaProdutoModel;
 import br.com.pedrocamargo.vrvendas.service.ProdutoService;
 import br.com.pedrocamargo.vrvendas.service.VendaService;
 import br.com.pedrocamargo.vrvendas.store.VendaStorage;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class VendaController implements VendaControllerInterface {
     
@@ -57,7 +56,7 @@ public class VendaController implements VendaControllerInterface {
     }
     
     @Override
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
+    public List<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
         return vendaService.getVendasVoByIdStatus(idStatus);
     }
     
@@ -67,12 +66,12 @@ public class VendaController implements VendaControllerInterface {
     }
     
     @Override
-    public ArrayList<VendaVO> getAllVendasVo() throws SQLException {
+    public List<VendaVO> getAllVendasVo() throws SQLException {
         return vendaService.getAllVendasVo();
     }
     
     @Override
-    public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException{
+    public List<VendaProdutoModel> getProdutosVendaByIdVenda(Integer idVenda) throws SQLException{
         return vendaService.getProdutosVendaByIdVenda(idVenda);
     }
     
@@ -113,7 +112,7 @@ public class VendaController implements VendaControllerInterface {
     }
 
     @Override
-    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
+    public List<ProdutoVendaErroFinalizacaoModel> getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
         return vendaService.getProdutosVendaErroFinalizacao(idVenda);
     }
 }

@@ -1,10 +1,13 @@
 package br.com.pedrocamargo.vrvendas.dao;
 
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
+import br.com.pedrocamargo.vrvendas.model.ProdutoVendaErroFinalizacaoModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VendaProdutoErroFinalizacaoDao {
     private ConnectionFactory connF;
@@ -15,7 +18,8 @@ public class VendaProdutoErroFinalizacaoDao {
         this.sql = new StringBuilder();
     }
     
-    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException{
+    public List<ProdutoVendaErroFinalizacaoModel> getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException{
+        List<ProdutoVendaErroFinalizacaoModel> produtoVendaErroFinalizacaoModelList = new ArrayList<>();
         
         sql.setLength(0);
         sql.append("SELECT p.id,vpe.id_vendaproduto,vpe.motivoerro,p.descricao,vp.quantidade ");
@@ -33,8 +37,18 @@ public class VendaProdutoErroFinalizacaoDao {
             
             ResultSet rs = ps.executeQuery();
             
-            return rs;
+            while(rs.next()){
+                produtoVendaErroFinalizacaoModelList.add(
+                        new ProdutoVendaErroFinalizacaoModel(
+                                rs.getInt("id"), 
+                                rs.getInt("id_vendaproduto"), 
+                                rs.getString("motivoerro"), 
+                                rs.getString("descricao"), 
+                                rs.getInt("quantidade"))
+                );
+            }
         }
+        return produtoVendaErroFinalizacaoModelList;
     }
     
     public void inserirProdutoVendaProdutoErro(Integer idVendaProduto, String motivo) throws SQLException{

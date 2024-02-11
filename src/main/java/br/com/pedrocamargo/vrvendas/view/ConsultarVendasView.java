@@ -198,7 +198,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
             }
         }
         gerarTabela = new GerarTabelaUtil(nomeColunasVisualizacaoNormal,false);        
-        ArrayList<VendaVO> vendas;
+        List<VendaVO> vendas;
         DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         
         try {
@@ -256,44 +256,46 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                             BigDecimal totalVendasDigitando = new BigDecimal(0);
                             BigDecimal totalVendasFinalParc = new BigDecimal(0);
                             BigDecimal totalVendasFinal = new BigDecimal(0);                        
-
-                            DefaultTableModel subTabelaPorCliente = new DefaultTableModel(){
+                            
+                            if(vendas.size() > 0){
+                                DefaultTableModel subTabelaPorCliente = new DefaultTableModel(){
                                     @Override
                                     public boolean isCellEditable(int row, int column) {
                                         return false;
                                     }
                                 };
-                            subTabelaPorCliente.addColumn("ID");
-                            subTabelaPorCliente.addColumn("Valor Total");
-                            subTabelaPorCliente.addColumn("Status");
-                               
-                            for(int i = 0; i < vendas.size(); i++){
-                                VendaModel venda = vendas.get(i);
-                                
-                                switch(venda.getId_status()){
-                                    case 1:
-                                        totalVendasDigitando = totalVendasDigitando.add(venda.getValortotal());
-                                    break;
-                                    case 2:
-                                        totalVendasFinalParc = totalVendasFinalParc.add(venda.getValortotal());
-                                    break;
-                                    case 3:
-                                        totalVendasFinal = totalVendasFinal.add(venda.getValortotal());
-                                    break;
-                                }
-                                subTabelaPorCliente.addRow(new Object[]{venda.getId(),"R$ " + venda.getValortotal().toString(),StatusVendaEnum.porCodigo(venda.getId_status()).getDescricao()});
-                            }
-                            
-                            subTabelaPorCliente.addRow(new Object[]{""});
-                            subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
-                            subTabelaPorCliente.addRow(
-                                    new Object[]{
-                                        "Digitando: R$ " +  totalVendasDigitando.toString(),
-                                        "Final. Parc.: R$ " +  totalVendasFinalParc.toString(),
-                                        "Finalizados: R$ " +  totalVendasFinal.toString(),
+                                subTabelaPorCliente.addColumn("ID");
+                                subTabelaPorCliente.addColumn("Valor Total");
+                                subTabelaPorCliente.addColumn("Status");
+
+                                for(int i = 0; i < vendas.size(); i++){
+                                    VendaModel venda = vendas.get(i);
+
+                                    switch(venda.getId_status()){
+                                        case 1:
+                                            totalVendasDigitando = totalVendasDigitando.add(venda.getValortotal());
+                                        break;
+                                        case 2:
+                                            totalVendasFinalParc = totalVendasFinalParc.add(venda.getValortotal());
+                                        break;
+                                        case 3:
+                                            totalVendasFinal = totalVendasFinal.add(venda.getValortotal());
+                                        break;
                                     }
-                            );
-                            gerarTabela.addLinha(new Object[]{cliente.getId(), cliente.getNome(), cliente.getCnpj(),subTabelaPorCliente});
+                                    subTabelaPorCliente.addRow(new Object[]{venda.getId(),"R$ " + venda.getValortotal().toString(),StatusVendaEnum.porCodigo(venda.getId_status()).getDescricao()});
+                                }
+
+                                subTabelaPorCliente.addRow(new Object[]{""});
+                                subTabelaPorCliente.addRow(new Object[]{"TOTALIZADORES:"});
+                                subTabelaPorCliente.addRow(
+                                        new Object[]{
+                                            "Digitando: R$ " +  totalVendasDigitando.toString(),
+                                            "Final. Parc.: R$ " +  totalVendasFinalParc.toString(),
+                                            "Finalizados: R$ " +  totalVendasFinal.toString(),
+                                        }
+                                );
+                                gerarTabela.addLinha(new Object[]{cliente.getId(), cliente.getNome(), cliente.getCnpj(),subTabelaPorCliente});
+                            }
                         }catch(SQLException sqlE){
                             throw new RuntimeException(sqlE.getMessage());
                         }
@@ -324,7 +326,7 @@ public class ConsultarVendasView extends javax.swing.JInternalFrame {
                 
                 try {
                     for(int i = 1; i <= 3; i++){
-                        ArrayList<VendaVO> vendasVo = vendaController.getVendasVoByIdStatus(i);
+                        List<VendaVO> vendasVo = vendaController.getVendasVoByIdStatus(i);
                         
                         //Definindo SubTabela
                         DefaultTableModel subTabelaSituacao = new DefaultTableModel(){

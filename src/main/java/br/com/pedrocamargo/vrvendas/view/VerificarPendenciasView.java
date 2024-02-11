@@ -1,11 +1,13 @@
 package br.com.pedrocamargo.vrvendas.view;
 
 import br.com.pedrocamargo.vrvendas.controller.VendaController;
+import br.com.pedrocamargo.vrvendas.model.ProdutoVendaErroFinalizacaoModel;
 import java.awt.BorderLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import br.com.pedrocamargo.vrvendas.util.GerarTabelaUtil;
+import java.util.List;
 
 public class VerificarPendenciasView extends javax.swing.JInternalFrame {
 
@@ -27,11 +29,11 @@ public class VerificarPendenciasView extends javax.swing.JInternalFrame {
         gerarTabela.getTable().getColumnModel().getColumn(0).setMaxWidth(100);
         
         try {
-            ResultSet rsProdutosVenda = vendaController.getProdutosVendaErroFinalizacao(this.idVendaConsultada);
+            List<ProdutoVendaErroFinalizacaoModel> produtosVendaErro = vendaController.getProdutosVendaErroFinalizacao(this.idVendaConsultada);
             
-            while(rsProdutosVenda.next()){
-                gerarTabela.addLinha(new Object[]{rsProdutosVenda.getInt("id"),rsProdutosVenda.getString("descricao"),rsProdutosVenda.getString("motivoerro")});
-            }
+            produtosVendaErro.forEach((produtoErro) -> {
+                gerarTabela.addLinha(new Object[]{produtoErro.getId(),produtoErro.getDescricao(),produtoErro.getMotivoErro()});
+            });
             
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao recuperar produtos da venda.", "Aviso", JOptionPane.ERROR_MESSAGE);

@@ -7,13 +7,11 @@ import br.com.pedrocamargo.vrvendas.dao.VendaProdutoErroFinalizacaoDao;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.FakeProdutoAPIService;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.EnviarProdutoModel;
 import br.com.pedrocamargo.vrvendas.integration.fakeprodutoapi.models.ErroFinalizacaoResponseModel;
-import br.com.pedrocamargo.vrvendas.model.ClienteModel;
-import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
+import br.com.pedrocamargo.vrvendas.model.ProdutoVendaErroFinalizacaoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import br.com.pedrocamargo.vrvendas.model.VendaProdutoModel;
 import br.com.pedrocamargo.vrvendas.vo.ProdutoQuantidadeVO;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,18 +41,16 @@ public class VendaService {
     
     public VendaModel getVendaById(Integer idVenda) throws SQLException{
         
-        ResultSet rs = vendaDao.getVendaById(idVenda);
+        VendaModel venda = vendaDao.getVendaById(idVenda);
         
-        if(rs.next()){
-            VendaModel vendaModel = new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),new BigDecimal(0),rs.getTimestamp("created_at"),rs.getTimestamp("updated_at"));
-            
-            List<ProdutoQuantidadeVO> produtos = produtoDao.getProdutosByVendaId(vendaModel.getId());
+        if(venda != null){            
+            List<ProdutoQuantidadeVO> produtos = produtoDao.getProdutosByVendaId(venda.getId());
             
             produtos.forEach((produtoVo) -> {
-                vendaModel.adicionarProduto(produtoVo.getProduto(),produtoVo.getQuantidade());
+                venda.adicionarProduto(produtoVo.getProduto(),produtoVo.getQuantidade());
             });
             
-            return vendaModel;
+            return venda;
         }
         return null;
     }
@@ -63,71 +59,16 @@ public class VendaService {
         return vendaDao.getVendasByIdCliente(idCliente);
     }
     
-    public ArrayList<VendaVO> getAllVendasVo() throws SQLException {
-        ResultSet rs = vendaDao.getAllVendasVo();
-        ArrayList<VendaVO> vendas = new ArrayList<>();
-        while(rs.next()){
-           vendas.add(new VendaVO(
-                   rs.getInt("id_venda"),
-                   rs.getInt("id_status"), 
-                   new ClienteModel(rs.getInt("id_cliente"),
-                            rs.getString("nome"),
-                            rs.getString("nomefantasia"),
-                            rs.getString("razaosocial"),
-                            rs.getString("cnpj")
-                        ), 
-                   rs.getBigDecimal("valortotal"), 
-                   rs.getTimestamp("created_at"), 
-                   rs.getTimestamp("updated_at")
-                )
-           );
-        }
-        
-        return vendas;
+    public List<VendaVO> getAllVendasVo() throws SQLException {
+        return vendaDao.getAllVendasVo();
     }
     
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
-        ResultSet rs = vendaDao.getVendasVoByStatus(idStatus);
-        ArrayList<VendaVO> vendas = new ArrayList<>();
-        while(rs.next()){
-           vendas.add(new VendaVO(
-                   rs.getInt("id_venda"),
-                   rs.getInt("id_status"), 
-                   new ClienteModel(rs.getInt("id_cliente"),
-                            rs.getString("nome"),
-                            rs.getString("nomefantasia"),
-                            rs.getString("razaosocial"),
-                            rs.getString("cnpj")
-                        ), 
-                   rs.getBigDecimal("valortotal"), 
-                   rs.getTimestamp("created_at"), 
-                   rs.getTimestamp("updated_at")
-                )
-           );
-        }
-        
-        return vendas;
+    public List<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException {
+        return vendaDao.getVendasVoByStatus(idStatus);
     }
 
-    public VendaVO getVendaVoById(Integer idVenda) throws SQLException {
-        ResultSet rs = vendaDao.getVendaVoById(idVenda);
-        VendaVO vendaVo = null;
-        if(rs.next()){
-            vendaVo = new VendaVO(
-                   rs.getInt("id_venda"),
-                   rs.getInt("id_status"), 
-                   new ClienteModel(rs.getInt("id_cliente"),
-                            rs.getString("nome"),
-                            rs.getString("nomefantasia"),
-                            rs.getString("razaosocial"),
-                            rs.getString("cnpj")
-                        ), 
-                   rs.getBigDecimal("valortotal"), 
-                   rs.getTimestamp("created_at"), 
-                   rs.getTimestamp("updated_at")
-           );
-        }
-        return vendaVo;
+    public VendaVO getVendaVoById(Integer idVenda) throws SQLException {        
+        return vendaDao.getVendaVoById(idVenda);
     }
 
     public void excluirVenda(Integer id) throws SQLException {
@@ -143,11 +84,11 @@ public class VendaService {
                 produtosParaEnvio.add(new EnviarProdutoModel(produto.getId(),quantidade));
             });
         }else{
-            ResultSet rsProdutos = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
-            while(rsProdutos.next()){
-                vendaProdutoErroIds.add(rsProdutos.getInt("id_vendaproduto"));
-                produtosParaEnvio.add(new EnviarProdutoModel(rsProdutos.getInt("id"),rsProdutos.getInt("quantidade")));
-            }
+            List<ProdutoVendaErroFinalizacaoModel> produtosErro = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
+            produtosErro.forEach((produtoErro) -> {
+                vendaProdutoErroIds.add(produtoErro.getId_vendaproduto());
+                produtosParaEnvio.add(new EnviarProdutoModel(produtoErro.getId(),produtoErro.getQuantidade()));
+            });
         }
         
         Map<Integer,String> responseApi = fakeProdutoApiService.postProdutosApi(produtosParaEnvio);
@@ -171,19 +112,19 @@ public class VendaService {
                 vendaDao.atualizarStatusVenda(venda.getId(),2);
                 ErroFinalizacaoResponseModel erroFinalizacao = fakeProdutoApiService.obterObjetoErro(responseApi.get(207));
                 
-                ResultSet idsVendaProduto = vendaProdutoDao.getVendaProdutoByIdVenda(venda.getId());
-                ResultSet idsProdutoErro = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
+                List<VendaProdutoModel> idsVendaProduto = vendaProdutoDao.getVendaProdutoByIdVenda(venda.getId());
+                List<ProdutoVendaErroFinalizacaoModel> idsProdutoErro = vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(venda.getId());
                 
                 Map<Integer,Integer> idProdutoIdVendaProduto = new HashMap<>();
                 Map<Integer,Integer> idProdutoIdVendaProdutoError = new HashMap<>();
                 
-                while(idsVendaProduto.next()){
-                    idProdutoIdVendaProduto.put(idsVendaProduto.getInt("id_produto"),idsVendaProduto.getInt("id"));
-                }
+                idsVendaProduto.forEach((vendaProduto) -> {
+                    idProdutoIdVendaProduto.put(vendaProduto.getId_produto(),vendaProduto.getId());
+                });
                 
-                while(idsProdutoErro.next()){
-                    idProdutoIdVendaProdutoError.put(idsProdutoErro.getInt("id"),idsProdutoErro.getInt("id_vendaproduto"));
-                } 
+                idsProdutoErro.forEach((produtoErro) -> {
+                    idProdutoIdVendaProdutoError.put(produtoErro.getId(),produtoErro.getId_vendaproduto());
+                });
                 
                 erroFinalizacao.getErrors().forEach((id,erro) -> {
                     try{
@@ -220,11 +161,11 @@ public class VendaService {
         vendaProdutoErroFinalizacaoDao.inserirProdutoVendaProdutoErro(idVendaProduto, motivo);
     }
 
-    public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException {
+    public List<VendaProdutoModel> getProdutosVendaByIdVenda(Integer idVenda) throws SQLException {
         return vendaProdutoDao.getVendaProdutoByIdVenda(idVenda);
     }
 
-    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
+    public List<ProdutoVendaErroFinalizacaoModel> getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException {
         return vendaProdutoErroFinalizacaoDao.getProdutosVendaErroFinalizacao(idVenda);
     }
 }

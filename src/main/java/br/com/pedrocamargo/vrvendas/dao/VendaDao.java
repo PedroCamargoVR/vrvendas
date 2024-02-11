@@ -1,8 +1,11 @@
 package br.com.pedrocamargo.vrvendas.dao;
 
 import br.com.pedrocamargo.vrvendas.config.ConnectionFactory;
+import br.com.pedrocamargo.vrvendas.model.ClienteModel;
 import br.com.pedrocamargo.vrvendas.model.ProdutoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import br.com.pedrocamargo.vrvendas.vo.VendaVO;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,7 +33,7 @@ public class VendaDao {
     public VendaDao(ConnectionFactory conn){
         this.connF = conn;
         this.sql = new StringBuilder();
-        this.vendaProdutoDao = new VendaProdutoDao();
+        this.vendaProdutoDao = new VendaProdutoDao(conn);
     }
     
     public Integer salvarVenda(VendaModel venda) throws SQLException{
@@ -123,8 +126,8 @@ public class VendaDao {
         return -1;
     }
     
-    public ResultSet getVendaById(Integer id) throws SQLException{
-        
+    public VendaModel getVendaById(Integer id) throws SQLException{
+        VendaModel venda = null;
         sql.setLength(0);
         sql.append("SELECT * FROM venda WHERE id = ?");
         
@@ -133,8 +136,11 @@ public class VendaDao {
             ps.setInt(1, id);
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            while(rs.next()){
+                venda = new VendaModel(rs.getInt("id"),rs.getInt("id_cliente"),rs.getInt("id_status"),new BigDecimal(0),rs.getTimestamp("created_at"),rs.getTimestamp("updated_at"));
+            }
         }
+        return venda;
     }
     
     public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException{
@@ -157,7 +163,9 @@ public class VendaDao {
         return vendas;
     }
 
-    public ResultSet getAllVendasVo() throws SQLException {
+    public List<VendaVO> getAllVendasVo() throws SQLException {
+        List<VendaVO> vendasVO = new ArrayList<>();
+        
         sql.setLength(0);
         sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
         sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
@@ -167,42 +175,90 @@ public class VendaDao {
             PreparedStatement ps = conn.prepareStatement(sql.toString());
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            while(rs.next()){
+                vendasVO.add(new VendaVO(
+                        rs.getInt("id_venda"),
+                        rs.getInt("id_status"), 
+                        new ClienteModel(rs.getInt("id_cliente"),
+                                 rs.getString("nome"),
+                                 rs.getString("nomefantasia"),
+                                 rs.getString("razaosocial"),
+                                 rs.getString("cnpj")
+                             ), 
+                        rs.getBigDecimal("valortotal"), 
+                        rs.getTimestamp("created_at"), 
+                        rs.getTimestamp("updated_at")
+                    )
+                );
+            }
         }
+        return vendasVO;
     }
         
-    public ResultSet getVendasVoByStatus(Integer idStatus) throws SQLException{
+    public List<VendaVO> getVendasVoByStatus(Integer idStatus) throws SQLException{
+        List<VendaVO> vendasVO = new ArrayList<>();
+        
         sql.setLength(0);
         sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
         sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
         sql.append("WHERE id_status = ? ");
         sql.append("ORDER BY v.id");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString());){
             ps.setInt(1,idStatus);
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            while(rs.next()){
+                vendasVO.add(new VendaVO(
+                        rs.getInt("id_venda"),
+                        rs.getInt("id_status"), 
+                        new ClienteModel(rs.getInt("id_cliente"),
+                                 rs.getString("nome"),
+                                 rs.getString("nomefantasia"),
+                                 rs.getString("razaosocial"),
+                                 rs.getString("cnpj")
+                             ), 
+                        rs.getBigDecimal("valortotal"), 
+                        rs.getTimestamp("created_at"), 
+                        rs.getTimestamp("updated_at")
+                    )
+                );
+            }
         }
+        return vendasVO;
     }
     
-    public ResultSet getVendaVoById(Integer idVenda) throws SQLException {
+    public VendaVO getVendaVoById(Integer idVenda) throws SQLException {
+        VendaVO vendaVo = null;
+        
         sql.setLength(0);
         sql.append("SELECT v.id as \"id_venda\",v.id_cliente,v.id_status,v.valortotal,v.created_at,v.updated_at,c.id as \"id_cliente\",c.nome,c.nomefantasia,c.razaosocial,c.cnpj FROM venda v ");
         sql.append("INNER JOIN clientes c ON c.id = v.id_cliente ");
         sql.append("WHERE v.id = ? ");
         sql.append("ORDER BY v.id_status");
         
-        try(Connection conn = connF.getConnection()){
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            
+        try(Connection conn = connF.getConnection();PreparedStatement ps = conn.prepareStatement(sql.toString());){
             ps.setInt(1,idVenda);
             
             ResultSet rs = ps.executeQuery();
-            return rs;
+            
+            if(rs.next()){
+                vendaVo = new VendaVO(
+                       rs.getInt("id_venda"),
+                       rs.getInt("id_status"), 
+                       new ClienteModel(rs.getInt("id_cliente"),
+                                rs.getString("nome"),
+                                rs.getString("nomefantasia"),
+                                rs.getString("razaosocial"),
+                                rs.getString("cnpj")
+                            ), 
+                       rs.getBigDecimal("valortotal"), 
+                       rs.getTimestamp("created_at"), 
+                       rs.getTimestamp("updated_at")
+               );
+            }
         }
+        return vendaVo;
     }
 
     public void excluirVenda(Integer idVenda) throws SQLException {

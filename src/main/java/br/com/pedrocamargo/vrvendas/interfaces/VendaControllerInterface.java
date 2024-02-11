@@ -1,11 +1,11 @@
 package br.com.pedrocamargo.vrvendas.interfaces;
 
+import br.com.pedrocamargo.vrvendas.model.ProdutoVendaErroFinalizacaoModel;
 import br.com.pedrocamargo.vrvendas.model.VendaModel;
+import br.com.pedrocamargo.vrvendas.model.VendaProdutoModel;
 import br.com.pedrocamargo.vrvendas.vo.VendaVO;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface VendaControllerInterface {
@@ -18,15 +18,15 @@ public interface VendaControllerInterface {
     
     public List<VendaModel> getVendasByIdCliente(Integer idCliente) throws SQLException;
     
-    public ArrayList<VendaVO> getAllVendasVo() throws SQLException;
+    public List<VendaVO> getAllVendasVo() throws SQLException;
     
     public VendaVO getVendaVoById(Integer idVenda) throws SQLException;    
     
-    public ArrayList<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException;
+    public List<VendaVO> getVendasVoByIdStatus(Integer idStatus) throws SQLException;
     
-    public ResultSet getProdutosVendaByIdVenda(Integer idVenda) throws SQLException;
+    public List<VendaProdutoModel> getProdutosVendaByIdVenda(Integer idVenda) throws SQLException;
     
-    public ResultSet getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException;
+    public List<ProdutoVendaErroFinalizacaoModel> getProdutosVendaErroFinalizacao(Integer idVenda) throws SQLException;
     
     public void atualizaEstoqueProdutosVendaAtual() throws SQLException;
     

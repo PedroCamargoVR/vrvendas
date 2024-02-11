@@ -58,7 +58,7 @@ public class ProdutoDao {
                         psUpdate.setDouble(2, produto.getEstoque());
                         psUpdate.setBigDecimal(3, produto.getPreco());
                         psUpdate.setString(4, produto.getUnidade());
-                        psUpdate.setString(5, produto.getUltimaAtualizacao());
+                        psUpdate.setTimestamp(5, produto.getUltimaAtualizacaoTimeStamp());
                         psUpdate.setInt(6,produto.getId());
                         
                         psUpdate.execute();
@@ -76,7 +76,7 @@ public class ProdutoDao {
                         psInsert.setDouble(2, produto.getEstoque());
                         psInsert.setBigDecimal(3, produto.getPreco());
                         psInsert.setString(4, produto.getUnidade());
-                        psInsert.setString(5, produto.getUltimaAtualizacao());
+                        psInsert.setTimestamp(5, produto.getUltimaAtualizacaoTimeStamp());
                         
                         psInsert.execute();
                     }
