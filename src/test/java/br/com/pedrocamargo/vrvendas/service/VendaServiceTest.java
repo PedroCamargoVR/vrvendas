@@ -106,7 +106,7 @@ public class VendaServiceTest extends BaseTest {
         vendaBanco = vendaService.getVendaById(1);
         
         assertEquals(3,vendaBanco.getId_status());
-        assertTrue(vendaService.getProdutosVendaErroFinalizacao(1).size() == 0);
+        assertTrue(vendaService.getProdutosVendaErroFinalizacao(1).isEmpty());
     }
     
     @Test

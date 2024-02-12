@@ -14,7 +14,6 @@ public class VendaStorage {
         this.vendaAtual = vendaModel;
     }
     
-    
     public void criarNovaVenda() {
         this.vendaAtual = new VendaModel(0, 0, 1, new BigDecimal(0));
     }

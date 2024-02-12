@@ -34,7 +34,4 @@ public class ProdutoVendaErroFinalizacaoModel {
     public Integer getQuantidade() {
         return quantidade;
     }
-    
-    
-    
 }

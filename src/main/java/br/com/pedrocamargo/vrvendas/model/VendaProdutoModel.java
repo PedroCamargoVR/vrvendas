@@ -49,7 +49,4 @@ public class VendaProdutoModel {
     public Integer getQuantidade() {
         return quantidade;
     }
-    
-    
-    
 }
